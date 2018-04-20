@@ -1,21 +1,21 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-cache for the canonical source repository
- * @copyright Copyright (c) 2018 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-cache/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZendTest\Cache\Psr\SimpleCache;
+namespace ZendTest\Cache\Psr\CacheItemPool;
 
-use Cache\IntegrationTests\SimpleCacheTest;
+use Cache\IntegrationTests\CachePoolTest;
 use MongoDB\Client;
-use Zend\Cache\Psr\SimpleCache\SimpleCacheDecorator;
-use Zend\Cache\Storage\Adapter\ExtMongoDbOptions;
+use Zend\Cache\Psr\CacheItemPool\CacheItemPoolAdapter;
+use Zend\Cache\Storage\Adapter\ExtMongoDb;
 use Zend\Cache\StorageFactory;
 use Zend\Cache\Exception;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 
-class ExtMongoDbIntegrationTest extends SimpleCacheTest
+class ExtMongoDbIntegrationTest extends CachePoolTest
 {
     /**
      * Backup default timezone
@@ -56,13 +56,20 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
         parent::tearDown();
     }
 
-    public function createSimpleCache()
+    public function createCachePool()
     {
         $storage = StorageFactory::adapterFactory('extmongodb', [
             'server'     => getenv('TESTS_ZEND_CACHE_EXTMONGODB_CONNECTSTRING'),
             'database'   => getenv('TESTS_ZEND_CACHE_EXTMONGODB_DATABASE'),
             'collection' => getenv('TESTS_ZEND_CACHE_EXTMONGODB_COLLECTION'),
         ]);
-        return new SimpleCacheDecorator($storage);
+
+        $deferredSkippedMessage = sprintf(
+            '%s storage doesn\'t support driver deferred',
+            \get_class($storage)
+        );
+        $this->skippedTests['testHasItemReturnsFalseWhenDeferredItemIsExpired'] = $deferredSkippedMessage;
+
+        return new CacheItemPoolAdapter($storage);
     }
 }
