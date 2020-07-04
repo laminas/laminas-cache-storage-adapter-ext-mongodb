@@ -22,10 +22,6 @@ class ExtMongoDbOptionsTest extends TestCase
 
     public function setUp()
     {
-        if (getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_ENABLED') != 'true') {
-            $this->markTestSkipped('Enable TESTS_LAMINAS_CACHE_EXTMONGODB_ENABLED to run this test');
-        }
-
         if (! extension_loaded('mongodb') || ! class_exists(Client::class)) {
             $this->markTestSkipped("mongodb extension is not loaded");
         }
