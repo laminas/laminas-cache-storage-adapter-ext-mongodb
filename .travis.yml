@@ -4,6 +4,9 @@ cache:
   directories:
     - $HOME/.composer/cache
 
+services:
+  - mongodb
+
 env:
   global:
     - COMPOSER_ARGS="--no-interaction"
