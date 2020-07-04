@@ -61,6 +61,9 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
             'collection' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
 
+        $serializer = StorageFactory::pluginFactory('serializer');
+        $storage->addPlugin($serializer);
+
         $deferredSkippedMessage = sprintf(
             '%s storage doesn\'t support driver deferred',
             \get_class($storage)

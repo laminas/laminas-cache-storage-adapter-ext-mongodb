@@ -60,6 +60,9 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
             'database'   => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             'collection' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
+        $serializer = StorageFactory::pluginFactory('serializer');
+        $storage->addPlugin($serializer);
+
         return new SimpleCacheDecorator($storage);
     }
 }
