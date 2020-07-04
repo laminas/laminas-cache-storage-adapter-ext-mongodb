@@ -8,6 +8,7 @@ env:
   global:
     - COMPOSER_ARGS="--no-interaction"
     - COVERAGE_DEPS="php-coveralls/php-coveralls"
+    - SERIALIZER_DEPS="laminas/laminas-serializer"
     - EXTMONGODB_DEPS="mongodb/mongodb"
 
 matrix:
@@ -16,21 +17,27 @@ matrix:
     - php: 5.6
       env:
         - DEPS=lowest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 5.6
       env:
         - DEPS=latest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 7.0
       env:
         - DEPS=lowest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 7.0
       env:
         - DEPS=latest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 7.1
       env:
         - DEPS=lowest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 7.1
       env:
         - DEPS=latest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 7.2
       env:
         - DEPS=lowest
@@ -58,7 +65,7 @@ before_install:
 install:
   - phpenv config-add .ci/mongodb.ini
   - travis_retry composer install $COMPOSER_ARGS --ignore-platform-reqs
-  - travis_retry composer require --dev --no-update $COMPOSER_ARGS $EXTMONGODB_DEPS
+  - travis_retry composer require --dev --no-update $COMPOSER_ARGS $EXTMONGODB_DEPS $SERIALIZER_DEPS
   - if [[ $DEPS == 'latest' ]]; then travis_retry composer update $COMPOSER_ARGS ; fi
   - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
   - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
