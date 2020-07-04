@@ -41,9 +41,11 @@ matrix:
     - php: 7.2
       env:
         - DEPS=lowest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 7.2
       env:
         - DEPS=latest
+        - EXTMONGODB_DEPS="mongodb/mongodb:~1.4.0"
     - php: 7.3
       env:
         - DEPS=lowest
