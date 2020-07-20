@@ -67,4 +67,18 @@ class ExtMongoDbTest extends CommonAdapterTest
 
         $this->assertInstanceOf(ExtMongoDbOptions::class, $this->_storage->getOptions());
     }
+
+    public function testSetItemWithNestedArraysWillReturnNestedArrayValue()
+    {
+        $value = [
+            'foo' => [
+                'bar' => [
+                    'baz' => [],
+                ],
+            ],
+        ];
+
+        $this->assertTrue($this->_storage->setItem('test', $value));
+        $this->assertSame($value, $this->_storage->getItem('test'));
+    }
 }
