@@ -8,6 +8,7 @@
 
 namespace Laminas\Cache\Storage\Adapter;
 
+use ArrayObject;
 use Laminas\Cache\Exception;
 use Laminas\Cache\Storage\Capabilities;
 use Laminas\Cache\Storage\FlushableInterface;
@@ -161,7 +162,12 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
         $success = true;
 
-        return $casToken = $result['value'];
+        $value = $result['value'];
+        if ($value instanceof ArrayObject) {
+            $value = $this->arrayObjectToArray($value);
+        }
+
+        return $casToken = $value;
     }
 
     /**
@@ -281,5 +287,23 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
         } catch (MongoDriverException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @return array<int|string,mixed>
+     */
+    private function arrayObjectToArray(ArrayObject $value): array
+    {
+        $converted = $value->getArrayCopy();
+
+        foreach ($converted as $index => $nested) {
+            if (! $nested instanceof ArrayObject) {
+                continue;
+            }
+
+            $converted[$index] = $this->arrayObjectToArray($nested);
+        }
+
+        return $converted;
     }
 }
