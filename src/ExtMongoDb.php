@@ -223,6 +223,10 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     public function flush()
     {
         $result = $this->getMongoCollection()->drop();
+        if ($result instanceof stdClass) {
+            $result = (array) $result;
+        }
+
         return ((float) 1) === $result['ok'];
     }
 
