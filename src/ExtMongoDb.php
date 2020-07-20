@@ -16,7 +16,9 @@ use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
+use MongoDB\Model\BSONDocument;
 use stdClass;
+use function property_exists;
 
 /**
  * Cache storage adapter for ext-mongodb
@@ -152,7 +154,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             }
         }
 
-        if (! array_key_exists('value', $result)) {
+        if (! property_exists($result, 'value')) {
             throw new Exception\RuntimeException(sprintf(
                 "The found item _id '%s' for key '%s' is not a valid cache item: missing the field 'value'",
                 (string) $result['_id'],
@@ -280,7 +282,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @param string $normalizedKey
      *
-     * @return array|null
+     * @return BSONDocument|null
      *
      * @throws Exception\RuntimeException
      */
