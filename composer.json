@@ -46,6 +46,9 @@
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     },
+    "conflict": {
+        "mongodb/mongodb": "<1.6"
+    },
     "support": {
         "issues": "https://github.com/laminas/laminas-cache-storage-adapter-ext-mongodb/issues",
         "forum": "https://discourse.laminas.dev/",

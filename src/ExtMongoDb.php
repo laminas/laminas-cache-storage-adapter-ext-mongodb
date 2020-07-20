@@ -146,7 +146,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
                 ));
             }
 
-            if ($result['expires']->sec < (new MongoDate())) {
+            if ($result['expires']->toDateTime() < (new MongoDate())->toDateTime()) {
                 $this->internalRemoveItem($normalizedKey);
                 return;
             }
