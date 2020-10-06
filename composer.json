@@ -9,14 +9,17 @@
   "require": {
     "php": "^5.6 || ^7.0"
   },
+  "conflict": {
+    "laminas/laminas-cache": "<2.10"
+  },
   "provide": {
     "laminas/laminas-cache-storage-implementation": "1.0"
   },
   "require-dev": {
+    "laminas/laminas-cache": "^2.10",
     "laminas/laminas-cache-storage-adapter-test": "^1.0@dev",
     "laminas/laminas-coding-standard": "~1.0.0",
-    "squizlabs/php_codesniffer": "^2.7",
-    "laminas/laminas-cache": "^2.10"
+    "squizlabs/php_codesniffer": "^2.7"
   },
   "suggest": {
     "ext-mongodb": "MongoDB, to use the ExtMongoDb storage adapter"
@@ -48,8 +51,5 @@
     "source": "https://github.com/laminas/laminas-cache-storage-adapter-ext-mongodb",
     "docs": "https://docs.laminas.dev/laminas-cache-storage-adapter-ext-mongodb/",
     "rss": "https://github.com/laminas/laminas-cache-storage-adapter-ext-mongodb/releases.atom"
-  },
-  "conflict": {
-    "laminas/laminas-cache": "<2.10"
   }
 }
