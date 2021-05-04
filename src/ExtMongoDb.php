@@ -134,6 +134,8 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             return;
         }
 
+        self::ensureArrayType($result);
+
         if (isset($result['expires'])) {
             if (! $result['expires'] instanceof MongoDate) {
                 throw new Exception\RuntimeException(sprintf(
@@ -151,7 +153,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             }
         }
 
-        if (! isset($result['value'])) {
+        if (! array_key_exists('value', $result)) {
             throw new Exception\RuntimeException(sprintf(
                 "The found item _id '%s' for key '%s' is not a valid cache item: missing the field 'value'",
                 (string) $result['_id'],
@@ -162,6 +164,24 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
         $success = true;
 
         return $casToken = $result['value'];
+    }
+
+    /**
+     * @param mixed $result
+     */
+    private static function ensureArrayType(& $result): void
+    {
+        if ($result instanceof \ArrayObject) {
+            $result = $result->getArrayCopy();
+        }
+
+        if (! is_array($result)) {
+            return;
+        }
+
+        foreach ($result as &$value) {
+            self::ensureArrayType($value);
+        }
     }
 
     /**
