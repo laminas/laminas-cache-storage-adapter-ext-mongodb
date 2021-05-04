@@ -15,31 +15,27 @@ use MongoDB\Client;
 /**
  * @covers Laminas\Cache\Storage\Adapter\ExtMongoDb<extended>
  */
-class ExtMongoDbTest extends CommonAdapterTest
+class ExtMongoDbTest extends AbstractCommonAdapterTest
 {
-    public function setUp()
+    public function setUp(): void
     {
-        if (! extension_loaded('mongodb') || ! class_exists(Client::class)) {
-            $this->markTestSkipped("mongodb extension is not loaded");
-        }
-
-        $this->_options = new ExtMongoDbOptions([
+        $this->options = new ExtMongoDbOptions([
             'server'     => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
             'database'   => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             'collection' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
 
-        $this->_storage = new ExtMongoDb();
-        $this->_storage->setOptions($this->_options);
-        $this->_storage->flush();
+        $this->storage = new ExtMongoDb();
+        $this->storage->setOptions($this->options);
+        $this->storage->flush();
 
         parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
-        if ($this->_storage) {
-            $this->_storage->flush();
+        if ($this->storage) {
+            $this->storage->flush();
         }
 
         parent::tearDown();
@@ -59,12 +55,12 @@ class ExtMongoDbTest extends CommonAdapterTest
 
     public function testSetOptionsNotMongoDbOptions()
     {
-        $this->_storage->setOptions([
+        $this->storage->setOptions([
             'server'     => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
             'database'   => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             'collection' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
 
-        $this->assertInstanceOf(ExtMongoDbOptions::class, $this->_storage->getOptions());
+        $this->assertInstanceOf(ExtMongoDbOptions::class, $this->storage->getOptions());
     }
 }

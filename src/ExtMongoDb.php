@@ -145,13 +145,13 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
                 ));
             }
 
-            if ($result['expires']->sec < (new MongoDate())) {
+            if ($result['expires'] < (new MongoDate())) {
                 $this->internalRemoveItem($normalizedKey);
                 return;
             }
         }
 
-        if (! array_key_exists('value', $result)) {
+        if (! isset($result['value'])) {
             throw new Exception\RuntimeException(sprintf(
                 "The found item _id '%s' for key '%s' is not a valid cache item: missing the field 'value'",
                 (string) $result['_id'],
@@ -216,8 +216,8 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      */
     public function flush()
     {
-        $result = $this->getMongoCollection()->drop();
-        return ((float) 1) === $result['ok'];
+        $result = (object) $this->getMongoCollection()->drop();
+        return ((float) 1) === $result->ok;
     }
 
     /**

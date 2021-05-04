@@ -12,6 +12,7 @@ use Cache\IntegrationTests\CachePoolTest;
 use Laminas\Cache\Exception;
 use Laminas\Cache\Psr\CacheItemPool\CacheItemPoolDecorator;
 use Laminas\Cache\Storage\Adapter\ExtMongoDb;
+use Laminas\Cache\Storage\Plugin\Serializer;
 use Laminas\Cache\StorageFactory;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use MongoDB\Client;
@@ -24,17 +25,8 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
      */
     private $tz;
 
-    /**
-     * @var ExtMongoDb
-     */
-    private $storage;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        if (! extension_loaded('mongodb') || ! class_exists(Client::class)) {
-            $this->markTestSkipped("mongodb extension is not loaded");
-        }
-
         // set non-UTC timezone
         $this->tz = date_default_timezone_get();
         date_default_timezone_set('America/Vancouver');
@@ -42,13 +34,9 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         date_default_timezone_set($this->tz);
-
-        if ($this->storage) {
-            $this->storage->flush();
-        }
 
         parent::tearDown();
     }
@@ -60,9 +48,7 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
             'database'   => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             'collection' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
-
-        $serializer = StorageFactory::pluginFactory('serializer');
-        $storage->addPlugin($serializer);
+        $storage->addPlugin(new Serializer());
 
         $deferredSkippedMessage = sprintf(
             '%s storage doesn\'t support driver deferred',

@@ -51,8 +51,7 @@ class ExtMongoDbResourceManager
     {
         if ($resource instanceof Collection) {
             $this->resources[$id] = [
-                'db'                  => (string) $resource->db,
-                'db_instance'         => $resource->db,
+                'db'                  => $resource->getDatabaseName(),
                 'collection'          => (string) $resource,
                 'collection_instance' => $resource,
             ];
@@ -88,14 +87,12 @@ class ExtMongoDbResourceManager
         $resource = $this->resources[$id];
         if (! isset($resource['collection_instance'])) {
             try {
-                if (! isset($resource['db_instance'])) {
-                    if (! isset($resource['client_instance'])) {
-                        $resource['client_instance'] = new Client(
-                            isset($resource['server']) ? $resource['server'] : null,
-                            isset($resource['connection_options']) ? $resource['connection_options'] : [],
-                            isset($resource['driver_options']) ? $resource['driver_options'] : []
-                        );
-                    }
+                if (! isset($resource['client_instance'])) {
+                    $resource['client_instance'] = new Client(
+                        isset($resource['server']) ? $resource['server'] : null,
+                        isset($resource['connection_options']) ? $resource['connection_options'] : [],
+                        isset($resource['driver_options']) ? $resource['driver_options'] : []
+                    );
                 }
 
                 $collection = $resource['client_instance']->selectCollection(

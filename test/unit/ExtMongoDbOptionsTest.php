@@ -18,26 +18,14 @@ use PHPUnit\Framework\TestCase;
  */
 class ExtMongoDbOptionsTest extends TestCase
 {
+    /**
+     * @var ExtMongoDbOptions
+     */
     protected $object;
 
-    public function setUp()
+    public function setUp(): void
     {
-        if (! extension_loaded('mongodb') || ! class_exists(Client::class)) {
-            $this->markTestSkipped("mongodb extension is not loaded");
-        }
-
         $this->object = new ExtMongoDbOptions();
-    }
-
-    public function testSetNamespaceSeparator()
-    {
-        $this->assertAttributeEquals(':', 'namespaceSeparator', $this->object);
-
-        $namespaceSeparator = '_';
-
-        $this->object->setNamespaceSeparator($namespaceSeparator);
-
-        $this->assertAttributeEquals($namespaceSeparator, 'namespaceSeparator', $this->object);
     }
 
     public function testGetNamespaceSeparator()
@@ -49,17 +37,6 @@ class ExtMongoDbOptionsTest extends TestCase
         $this->object->setNamespaceSeparator($namespaceSeparator);
 
         $this->assertEquals($namespaceSeparator, $this->object->getNamespaceSeparator());
-    }
-
-    public function testSetResourceManager()
-    {
-        $this->assertAttributeEquals(null, 'resourceManager', $this->object);
-
-        $resourceManager = new ExtMongoDbResourceManager();
-
-        $this->object->setResourceManager($resourceManager);
-
-        $this->assertAttributeSame($resourceManager, 'resourceManager', $this->object);
     }
 
     public function testGetResourceManager()
@@ -74,17 +51,6 @@ class ExtMongoDbOptionsTest extends TestCase
         $this->object->setResourceManager($resourceManager);
 
         $this->assertSame($resourceManager, $this->object->getResourceManager());
-    }
-
-    public function testSetResourceId()
-    {
-        $this->assertAttributeEquals('default', 'resourceId', $this->object);
-
-        $resourceId = 'foo';
-
-        $this->object->setResourceId($resourceId);
-
-        $this->assertAttributeEquals($resourceId, 'resourceId', $this->object);
     }
 
     public function testGetResourceId()
