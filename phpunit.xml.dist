@@ -8,15 +8,14 @@
             <directory>./test</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <coverage processUncoveredFiles="true">
+        <include>
             <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </coverage>
     <php>
-        <env name="TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION" value="cache" />
-        <env name="TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING" value="mongodb://localhost/" />
-        <env name="TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE" value="laminas_test" />
+        <env name="TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION" value="cache"/>
+        <env name="TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING" value="mongodb://localhost/"/>
+        <env name="TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE" value="laminas_test"/>
     </php>
 </phpunit>
