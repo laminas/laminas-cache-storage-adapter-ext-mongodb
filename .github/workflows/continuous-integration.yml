@@ -24,7 +24,7 @@ jobs:
     needs: [matrix]
     runs-on: ${{ matrix.operatingSystem }}
     services:
-      redis:
+      mongo:
         image: mongo
     strategy:
       fail-fast: false
