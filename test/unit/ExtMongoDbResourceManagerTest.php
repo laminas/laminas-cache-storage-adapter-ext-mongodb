@@ -25,20 +25,17 @@ class ExtMongoDbResourceManagerTest extends TestCase
      */
     protected $object;
 
-    public function setUp()
+    public function setUp(): void
     {
-        if (! extension_loaded('mongodb') || ! class_exists(Client::class)) {
-            $this->markTestSkipped("mongodb extension is not loaded");
-        }
-
         $this->object = new ExtMongoDbResourceManager();
     }
 
     public function testSetResourceAlreadyCreated()
     {
-        $this->assertAttributeEmpty('resources', $this->object);
-
         $id = 'foo';
+
+        $this->assertFalse($this->object->hasResource($id));
+
 
         $client = new Client(getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'));
         $resource = $client->selectCollection(
@@ -53,9 +50,10 @@ class ExtMongoDbResourceManagerTest extends TestCase
 
     public function testSetResourceArray()
     {
-        $this->assertAttributeEmpty('resources', $this->object);
+        $id = 'foo';
 
-        $id     = 'foo';
+        $this->assertFalse($this->object->hasResource($id));
+
         $server = 'mongodb://test:1234';
 
         $this->object->setResource($id, ['server' => $server]);

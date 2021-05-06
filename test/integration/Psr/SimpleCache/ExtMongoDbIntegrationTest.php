@@ -24,31 +24,21 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
      */
     private $tz;
 
-    /**
-     * @var ExtMongoDb
-     */
-    private $storage;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        if (! extension_loaded('mongodb') || ! class_exists(Client::class)) {
-            $this->markTestSkipped("mongodb extension is not loaded");
-        }
-
         // set non-UTC timezone
         $this->tz = date_default_timezone_get();
         date_default_timezone_set('America/Vancouver');
 
+        $this->skippedTests['testBasicUsageWithLongKey'] = 'SimpleCacheDecorator requires keys to be <= 64 chars';
+        $this->skippedTests['testBinaryData'] = 'Binary data not supported';
+
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         date_default_timezone_set($this->tz);
-
-        if ($this->storage) {
-            $this->storage->flush();
-        }
 
         parent::tearDown();
     }
