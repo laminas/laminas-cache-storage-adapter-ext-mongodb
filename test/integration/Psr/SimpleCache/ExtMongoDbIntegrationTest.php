@@ -31,6 +31,7 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
         date_default_timezone_set('America/Vancouver');
 
         $this->skippedTests['testBasicUsageWithLongKey'] = 'SimpleCacheDecorator requires keys to be <= 64 chars';
+        $this->skippedTests['testBinaryData'] = 'Binary data not supported';
 
         parent::setUp();
     }

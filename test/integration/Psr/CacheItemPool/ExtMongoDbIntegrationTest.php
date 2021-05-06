@@ -55,6 +55,7 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
             \get_class($storage)
         );
         $this->skippedTests['testHasItemReturnsFalseWhenDeferredItemIsExpired'] = $deferredSkippedMessage;
+        $this->skippedTests['testBinaryData'] = 'Binary data not supported';
 
         return new CacheItemPoolDecorator($storage);
     }
