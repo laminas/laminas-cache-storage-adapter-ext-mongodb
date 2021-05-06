@@ -120,7 +120,6 @@ class ExtMongoDbResourceManager
         $this->resources[$id]['server'] = (string) $server;
 
         unset($this->resources[$id]['client_instance']);
-        unset($this->resources[$id]['db_instance']);
         unset($this->resources[$id]['collection_instance']);
     }
 
@@ -148,7 +147,6 @@ class ExtMongoDbResourceManager
         $this->resources[$id]['connection_options'] = $connectionOptions;
 
         unset($this->resources[$id]['client_instance']);
-        unset($this->resources[$id]['db_instance']);
         unset($this->resources[$id]['collection_instance']);
     }
 
@@ -178,7 +176,6 @@ class ExtMongoDbResourceManager
         $this->resources[$id]['driver_options'] = $driverOptions;
 
         unset($this->resources[$id]['client_instance']);
-        unset($this->resources[$id]['db_instance']);
         unset($this->resources[$id]['collection_instance']);
     }
 
@@ -205,7 +202,6 @@ class ExtMongoDbResourceManager
     {
         $this->resources[$id]['db'] = (string) $database;
 
-        unset($this->resources[$id]['db_instance']);
         unset($this->resources[$id]['collection_instance']);
     }
 
