@@ -19,21 +19,33 @@ class ExtMongoDbResourceManagerTest extends TestCase
     /** @var ExtMongoDbResourceManager */
     protected $object;
 
+    /** @var string */
+    private $connectString;
+
+    /** @var string */
+    private $database;
+
+    /** @var string */
+    private $collectionName;
+
     public function setUp(): void
     {
-        $this->object = new ExtMongoDbResourceManager();
+        $this->object         = new ExtMongoDbResourceManager();
+        $this->connectString  = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING');
+        $this->database       = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE');
+        $this->collectionName = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION');
     }
 
-    public function testSetResourceAlreadyCreated()
+    public function testSetResourceAlreadyCreated(): void
     {
         $id = 'foo';
 
         $this->assertFalse($this->object->hasResource($id));
 
-        $client   = new Client(getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'));
+        $client   = new Client($this->connectString);
         $resource = $client->selectCollection(
-            getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
-            getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION')
+            $this->database,
+            $this->collectionName
         );
 
         $this->object->setResource($id, $resource);
@@ -41,7 +53,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($resource, $this->object->getResource($id));
     }
 
-    public function testSetResourceArray()
+    public function testSetResourceArray(): void
     {
         $id = 'foo';
 
@@ -54,23 +66,24 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($server, $this->object->getServer($id));
     }
 
-    public function testSetResourceThrowsException()
+    public function testSetResourceThrowsException(): void
     {
         $id       = 'foo';
         $resource = new stdClass();
 
         $this->expectException(Exception\InvalidArgumentException::class);
+        /** @psalm-suppress InvalidArgument */
         $this->object->setResource($id, $resource);
     }
 
-    public function testHasResourceEmpty()
+    public function testHasResourceEmpty(): void
     {
         $id = 'foo';
 
         $this->assertFalse($this->object->hasResource($id));
     }
 
-    public function testHasResourceSet()
+    public function testHasResourceSet(): void
     {
         $id = 'foo';
 
@@ -79,7 +92,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertTrue($this->object->hasResource($id));
     }
 
-    public function testGetResourceNotSet()
+    public function testGetResourceNotSet(): void
     {
         $id = 'foo';
 
@@ -89,14 +102,14 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->object->getResource($id);
     }
 
-    public function testGetResourceInitialized()
+    public function testGetResourceInitialized(): void
     {
         $id = 'foo';
 
-        $client   = new Client(getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'));
+        $client   = new Client($this->connectString);
         $resource = $client->selectCollection(
-            getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
-            getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION')
+            $this->database,
+            $this->collectionName
         );
 
         $this->object->setResource($id, $resource);
@@ -104,13 +117,13 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($resource, $this->object->getResource($id));
     }
 
-    public function testCorrectDatabaseResourceName()
+    public function testCorrectDatabaseResourceName(): void
     {
         $id = 'foo';
 
         $resource = [
-            'db'     => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
-            'server' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
+            'db'     => $this->database,
+            'server' => $this->connectString,
         ];
 
         $this->object->setResource($id, $resource);
@@ -118,13 +131,13 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($resource['db'], $this->object->getResource($id)->getDatabaseName());
     }
 
-    public function testGetResourceNewResource()
+    public function testGetResourceNewResource(): void
     {
         $id                = 'foo';
-        $server            = getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING');
+        $server            = $this->connectString;
         $connectionOptions = ['connectTimeoutMS' => 5];
-        $database          = getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE');
-        $collection        = getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION');
+        $database          = $this->database;
+        $collection        = $this->collectionName;
 
         $this->object->setServer($id, $server);
         $this->object->setConnectionOptions($id, $connectionOptions);
@@ -134,13 +147,13 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertInstanceOf(Collection::class, $this->object->getResource($id));
     }
 
-    public function testGetResourceUnknownServerThrowsException()
+    public function testGetResourceUnknownServerThrowsException(): void
     {
         $id                = 'foo';
         $server            = 'mongodb://unknown.unknown';
         $connectionOptions = ['connectTimeoutMS' => 5];
-        $database          = getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE');
-        $collection        = getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION');
+        $database          = $this->database;
+        $collection        = $this->collectionName;
 
         $this->object->setServer($id, $server);
         $this->object->setConnectionOptions($id, $connectionOptions);
@@ -151,7 +164,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->object->getResource($id);
     }
 
-    public function testGetSetCollection()
+    public function testGetSetCollection(): void
     {
         $resourceId     = 'testResource';
         $collectionName = 'testCollection';
@@ -160,7 +173,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($collectionName, $this->object->getCollection($resourceId));
     }
 
-    public function testGetSetConnectionOptions()
+    public function testGetSetConnectionOptions(): void
     {
         $resourceId        = 'testResource';
         $connectionOptions = ['test1' => 'option1', 'test2' => 'option2'];
@@ -169,7 +182,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($connectionOptions, $this->object->getConnectionOptions($resourceId));
     }
 
-    public function testGetSetServer()
+    public function testGetSetServer(): void
     {
         $resourceId = 'testResource';
         $server     = 'testServer';
@@ -178,7 +191,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($server, $this->object->getServer($resourceId));
     }
 
-    public function testGetSetDriverOptions()
+    public function testGetSetDriverOptions(): void
     {
         $resourceId    = 'testResource';
         $driverOptions = ['test1' => 'option1', 'test2' => 'option2'];
@@ -187,7 +200,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($driverOptions, $this->object->getDriverOptions($resourceId));
     }
 
-    public function testGetSetDatabase()
+    public function testGetSetDatabase(): void
     {
         $resourceId = 'testResource';
         $database   = 'testDatabase';

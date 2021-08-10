@@ -112,7 +112,7 @@ class ExtMongoDbOptions extends AdapterOptions
      * Set the ext-mongodb resource id
      *
      * @param string $resourceId
-     * @return self Provides a fluent interface
+     * @return $this Provides a fluent interface
      */
     public function setResourceId($resourceId)
     {
@@ -131,7 +131,7 @@ class ExtMongoDbOptions extends AdapterOptions
      * Set the ext-mongodb server
      *
      * @param string $server
-     * @return self Provides a fluent interface
+     * @return $this Provides a fluent interface
      */
     public function setServer($server)
     {
@@ -141,7 +141,7 @@ class ExtMongoDbOptions extends AdapterOptions
 
     /**
      * @param array $connectionOptions
-     * @return self Provides a fluent interface
+     * @return $this Provides a fluent interface
      */
     public function setConnectionOptions(array $connectionOptions)
     {
@@ -151,7 +151,7 @@ class ExtMongoDbOptions extends AdapterOptions
 
     /**
      * @param array $driverOptions ext-mongodb driver options
-     * @return self Provides a fluent interface
+     * @return $this Provides a fluent interface
      */
     public function setDriverOptions(array $driverOptions)
     {
@@ -161,7 +161,7 @@ class ExtMongoDbOptions extends AdapterOptions
 
     /**
      * @param string $database
-     * @return string Provides a fluent interface
+     * @return $this Provides a fluent interface
      */
     public function setDatabase($database)
     {
@@ -171,7 +171,7 @@ class ExtMongoDbOptions extends AdapterOptions
 
     /**
      * @param string $collection
-     * @return self Provides a fluent interface
+     * @return $this Provides a fluent interface
      */
     public function setCollection($collection)
     {

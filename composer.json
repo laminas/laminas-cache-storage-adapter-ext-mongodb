@@ -21,7 +21,9 @@
     "laminas/laminas-cache-storage-adapter-test": "^1.1.1",
     "laminas/laminas-coding-standard": "~2.2.0",
     "laminas/laminas-serializer": "^2.10.1",
-    "mongodb/mongodb": "^1.8.0"
+    "mongodb/mongodb": "^1.8.0",
+    "psalm/plugin-phpunit": "^0.16.1",
+    "vimeo/psalm": "^4.9"
   },
   "suggest": {
     "mongodb/mongodb": "MongoDB, to use the ExtMongoDb storage adapter"
@@ -45,7 +47,8 @@
     "cs-check": "phpcs",
     "cs-fix": "phpcbf",
     "test": "phpunit --colors=always",
-    "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+    "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+    "static-analysis": "psalm --shepherd --stats"
   },
   "support": {
     "issues": "https://github.com/laminas/laminas-cache-storage-adapter-ext-mongodb/issues",

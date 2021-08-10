@@ -7,10 +7,12 @@ use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 
+use function assert;
 use function get_class;
 use function gettype;
 use function is_array;
 use function is_object;
+use function is_string;
 use function sprintf;
 
 /**
@@ -86,17 +88,21 @@ class ExtMongoDbResourceManager
         $resource = $this->resources[$id];
         if (! isset($resource['collection_instance'])) {
             try {
-                if (! isset($resource['client_instance'])) {
-                    $resource['client_instance'] = new Client(
-                        $resource['server'] ?? null,
-                        $resource['connection_options'] ?? [],
-                        $resource['driver_options'] ?? []
+                /** @psalm-suppress MixedAssignment */
+                $clientInstance = $resource['client_instance'] ?? null;
+                if (! $clientInstance instanceof Client) {
+                    $clientInstance = new Client(
+                        (string) ($resource['server'] ?? ''),
+                        (array) ($resource['connection_options'] ?? []),
+                        (array) ($resource['driver_options'] ?? [])
                     );
                 }
 
-                $collection = $resource['client_instance']->selectCollection(
-                    $resource['db'] ?? 'laminas',
-                    $resource['collection'] ?? 'cache'
+                $resource['client_instance'] = $clientInstance;
+
+                $collection = $clientInstance->selectCollection(
+                    (string) ($resource['db'] ?? 'laminas'),
+                    (string) ($resource['collection'] ?? 'cache')
                 );
                 $collection->createIndex(['key' => 1]);
 
@@ -106,7 +112,10 @@ class ExtMongoDbResourceManager
             }
         }
 
-        return $this->resources[$id]['collection_instance'];
+        $instance = $this->resources[$id]['collection_instance'];
+        assert($instance instanceof Collection);
+
+        return $instance;
     }
 
     /**
@@ -133,7 +142,12 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return $this->resources[$id]['server'] ?? null;
+        $server = $this->resources[$id]['server'] ?? null;
+        if (! is_string($server)) {
+            return null;
+        }
+
+        return $server;
     }
 
     /**
@@ -160,7 +174,12 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return $this->resources[$id]['connection_options'] ?? [];
+        $options = $this->resources[$id]['connection_options'] ?? [];
+        if (! is_array($options)) {
+            return [];
+        }
+
+        return $options;
     }
 
     /**
@@ -187,7 +206,12 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return $this->resources[$id]['driver_options'] ?? [];
+        $options = $this->resources[$id]['driver_options'] ?? [];
+        if (! is_array($options)) {
+            return [];
+        }
+
+        return $options;
     }
 
     /**
@@ -213,7 +237,12 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return $this->resources[$id]['db'] ?? '';
+        $db = $this->resources[$id]['db'] ?? '';
+        if (! is_string($db)) {
+            return '';
+        }
+
+        return $db;
     }
 
     /**
@@ -239,6 +268,11 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return $this->resources[$id]['collection'] ?? '';
+        $collection = $this->resources[$id]['collection'] ?? '';
+        if (! is_string($collection)) {
+            return '';
+        }
+
+        return $collection;
     }
 }
