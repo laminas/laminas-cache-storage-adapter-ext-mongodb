@@ -1,33 +1,19 @@
 <?php
 
-namespace LaminasTest\Cache\Psr\SimpleCache;
+namespace LaminasTest\Cache\Storage\Adapter\Psr\SimpleCache;
 
-use Cache\IntegrationTests\SimpleCacheTest;
-use Laminas\Cache\Psr\SimpleCache\SimpleCacheDecorator;
 use Laminas\Cache\Storage\Adapter\ExtMongoDb;
+use Laminas\Cache\Storage\Plugin\Serializer;
 use Laminas\Cache\Storage\PluginAwareInterface;
-use Laminas\Cache\StorageFactory;
-use Psr\SimpleCache\CacheInterface;
+use Laminas\Cache\Storage\StorageInterface;
+use LaminasTest\Cache\Storage\Adapter\AbstractSimpleCacheIntegrationTest;
 
-use function date_default_timezone_get;
-use function date_default_timezone_set;
 use function getenv;
 
-class ExtMongoDbIntegrationTest extends SimpleCacheTest
+class ExtMongoDbIntegrationTest extends AbstractSimpleCacheIntegrationTest
 {
-    /**
-     * Backup default timezone
-     *
-     * @var string
-     */
-    private $tz;
-
     protected function setUp(): void
     {
-        // set non-UTC timezone
-        $this->tz = date_default_timezone_get();
-        date_default_timezone_set('America/Vancouver');
-
         /** @psalm-suppress MixedArrayAssignment */
         $this->skippedTests['testBasicUsageWithLongKey'] = 'SimpleCacheDecorator requires keys to be <= 64 chars';
         /** @psalm-suppress MixedArrayAssignment */
@@ -36,14 +22,7 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
         parent::setUp();
     }
 
-    protected function tearDown(): void
-    {
-        date_default_timezone_set($this->tz);
-
-        parent::tearDown();
-    }
-
-    public function createSimpleCache(): CacheInterface
+    protected function createStorage(): StorageInterface
     {
         $storage = new ExtMongoDb([
             'server'     => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
@@ -51,10 +30,10 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
             'collection' => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
 
-        $serializer = StorageFactory::pluginFactory('serializer');
+        $serializer = new Serializer();
         self::assertInstanceOf(PluginAwareInterface::class, $storage);
         $storage->addPlugin($serializer);
 
-        return new SimpleCacheDecorator($storage);
+        return $storage;
     }
 }
