@@ -7,6 +7,12 @@ use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_object;
+use function sprintf;
+
 /**
  * Resource manager for the ext-mongodb adapter.
  *
@@ -25,7 +31,6 @@ class ExtMongoDbResourceManager
      * Check if a resource exists
      *
      * @param string $id
-     *
      * @return bool
      */
     public function hasResource($id)
@@ -83,15 +88,15 @@ class ExtMongoDbResourceManager
             try {
                 if (! isset($resource['client_instance'])) {
                     $resource['client_instance'] = new Client(
-                        isset($resource['server']) ? $resource['server'] : null,
-                        isset($resource['connection_options']) ? $resource['connection_options'] : [],
-                        isset($resource['driver_options']) ? $resource['driver_options'] : []
+                        $resource['server'] ?? null,
+                        $resource['connection_options'] ?? [],
+                        $resource['driver_options'] ?? []
                     );
                 }
 
                 $collection = $resource['client_instance']->selectCollection(
-                    isset($resource['db']) ? $resource['db'] : 'laminas',
-                    isset($resource['collection']) ? $resource['collection'] : 'cache'
+                    $resource['db'] ?? 'laminas',
+                    $resource['collection'] ?? 'cache'
                 );
                 $collection->createIndex(['key' => 1]);
 
@@ -120,7 +125,7 @@ class ExtMongoDbResourceManager
     /**
      * @param string $id
      * @return null|string
-     * @throws Exception\RuntimeException if no matching resource discovered
+     * @throws Exception\RuntimeException If no matching resource discovered.
      */
     public function getServer($id)
     {
@@ -128,7 +133,7 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return isset($this->resources[$id]['server']) ? $this->resources[$id]['server'] : null;
+        return $this->resources[$id]['server'] ?? null;
     }
 
     /**
@@ -147,7 +152,7 @@ class ExtMongoDbResourceManager
     /**
      * @param string $id
      * @return array
-     * @throws Exception\RuntimeException if no matching resource discovered
+     * @throws Exception\RuntimeException If no matching resource discovered.
      */
     public function getConnectionOptions($id)
     {
@@ -155,9 +160,7 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return isset($this->resources[$id]['connection_options'])
-            ? $this->resources[$id]['connection_options']
-            : [];
+        return $this->resources[$id]['connection_options'] ?? [];
     }
 
     /**
@@ -176,7 +179,7 @@ class ExtMongoDbResourceManager
     /**
      * @param string $id
      * @return array
-     * @throws Exception\RuntimeException if no matching resource discovered
+     * @throws Exception\RuntimeException If no matching resource discovered.
      */
     public function getDriverOptions($id)
     {
@@ -184,7 +187,7 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return isset($this->resources[$id]['driver_options']) ? $this->resources[$id]['driver_options'] : [];
+        return $this->resources[$id]['driver_options'] ?? [];
     }
 
     /**
@@ -202,7 +205,7 @@ class ExtMongoDbResourceManager
     /**
      * @param string $id
      * @return string
-     * @throws Exception\RuntimeException if no matching resource discovered
+     * @throws Exception\RuntimeException If no matching resource discovered.
      */
     public function getDatabase($id)
     {
@@ -210,7 +213,7 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return isset($this->resources[$id]['db']) ? $this->resources[$id]['db'] : '';
+        return $this->resources[$id]['db'] ?? '';
     }
 
     /**
@@ -228,7 +231,7 @@ class ExtMongoDbResourceManager
     /**
      * @param string $id
      * @return string
-     * @throws Exception\RuntimeException if no matching resource discovered
+     * @throws Exception\RuntimeException If no matching resource discovered.
      */
     public function getCollection($id)
     {
@@ -236,6 +239,6 @@ class ExtMongoDbResourceManager
             throw new Exception\RuntimeException("No resource with id '{$id}'");
         }
 
-        return isset($this->resources[$id]['collection']) ? $this->resources[$id]['collection'] : '';
+        return $this->resources[$id]['collection'] ?? '';
     }
 }

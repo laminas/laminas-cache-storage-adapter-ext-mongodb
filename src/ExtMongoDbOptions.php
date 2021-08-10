@@ -75,10 +75,9 @@ class ExtMongoDbOptions extends AdapterOptions
     /**
      * Set the ext-mongodb resource manager to use
      *
-     * @param null|ExtMongoDbResourceManager $resourceManager
      * @return self Provides a fluent interface
      */
-    public function setResourceManager(ExtMongoDbResourceManager $resourceManager = null)
+    public function setResourceManager(?ExtMongoDbResourceManager $resourceManager = null)
     {
         if ($this->resourceManager !== $resourceManager) {
             $this->triggerOptionEvent('resource_manager', $resourceManager);

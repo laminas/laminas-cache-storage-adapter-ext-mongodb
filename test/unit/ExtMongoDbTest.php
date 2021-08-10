@@ -4,7 +4,8 @@ namespace LaminasTest\Cache\Storage\Adapter;
 
 use Laminas\Cache\Storage\Adapter\ExtMongoDb;
 use Laminas\Cache\Storage\Adapter\ExtMongoDbOptions;
-use MongoDB\Client;
+
+use function getenv;
 
 /**
  * @covers Laminas\Cache\Storage\Adapter\ExtMongoDb<extended>
@@ -35,7 +36,7 @@ class ExtMongoDbTest extends AbstractCommonAdapterTest
         parent::tearDown();
     }
 
-    public function getCommonAdapterNamesProvider()
+    public function getCommonAdapterNamesProvider(): array
     {
         return [
             ['ext_mongo_db'],

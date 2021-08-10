@@ -9,14 +9,14 @@ use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+use function getenv;
+
 /**
  * @covers Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager
  */
 class ExtMongoDbResourceManagerTest extends TestCase
 {
-    /**
-     * @var ExtMongoDbResourceManager
-     */
+    /** @var ExtMongoDbResourceManager */
     protected $object;
 
     public function setUp(): void
@@ -30,8 +30,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
 
         $this->assertFalse($this->object->hasResource($id));
 
-
-        $client = new Client(getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'));
+        $client   = new Client(getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'));
         $resource = $client->selectCollection(
             getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION')
@@ -57,7 +56,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
 
     public function testSetResourceThrowsException()
     {
-        $id = 'foo';
+        $id       = 'foo';
         $resource = new stdClass();
 
         $this->expectException(Exception\InvalidArgumentException::class);
@@ -94,7 +93,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
     {
         $id = 'foo';
 
-        $client = new Client(getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'));
+        $client   = new Client(getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'));
         $resource = $client->selectCollection(
             getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION')
@@ -110,7 +109,7 @@ class ExtMongoDbResourceManagerTest extends TestCase
         $id = 'foo';
 
         $resource = [
-            'db' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
+            'db'     => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             'server' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
         ];
 
