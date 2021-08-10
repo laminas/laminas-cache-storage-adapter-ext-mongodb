@@ -4,7 +4,9 @@ namespace LaminasTest\Cache\Storage\Adapter;
 
 use Laminas\Cache\Storage\Adapter\ExtMongoDb;
 use Laminas\Cache\Storage\Adapter\ExtMongoDbOptions;
-use MongoDB\Client;
+use Laminas\Cache\Storage\FlushableInterface;
+
+use function getenv;
 
 /**
  * @covers Laminas\Cache\Storage\Adapter\ExtMongoDb<extended>
@@ -28,14 +30,14 @@ class ExtMongoDbTest extends AbstractCommonAdapterTest
 
     public function tearDown(): void
     {
-        if ($this->storage) {
+        if ($this->storage instanceof FlushableInterface) {
             $this->storage->flush();
         }
 
         parent::tearDown();
     }
 
-    public function getCommonAdapterNamesProvider()
+    public function getCommonAdapterNamesProvider(): array
     {
         return [
             ['ext_mongo_db'],
@@ -47,7 +49,7 @@ class ExtMongoDbTest extends AbstractCommonAdapterTest
         ];
     }
 
-    public function testSetOptionsNotMongoDbOptions()
+    public function testSetOptionsNotMongoDbOptions(): void
     {
         $this->storage->setOptions([
             'server'     => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),

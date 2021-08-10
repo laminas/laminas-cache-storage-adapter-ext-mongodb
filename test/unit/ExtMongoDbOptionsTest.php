@@ -4,7 +4,6 @@ namespace LaminasTest\Cache\Storage\Adapter;
 
 use Laminas\Cache\Storage\Adapter\ExtMongoDbOptions;
 use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
-use MongoDB\Client;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,9 +11,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExtMongoDbOptionsTest extends TestCase
 {
-    /**
-     * @var ExtMongoDbOptions
-     */
+    /** @var ExtMongoDbOptions */
     protected $object;
 
     public function setUp(): void
@@ -22,7 +19,7 @@ class ExtMongoDbOptionsTest extends TestCase
         $this->object = new ExtMongoDbOptions();
     }
 
-    public function testGetNamespaceSeparator()
+    public function testGetNamespaceSeparator(): void
     {
         $this->assertEquals(':', $this->object->getNamespaceSeparator());
 
@@ -33,7 +30,7 @@ class ExtMongoDbOptionsTest extends TestCase
         $this->assertEquals($namespaceSeparator, $this->object->getNamespaceSeparator());
     }
 
-    public function testGetResourceManager()
+    public function testGetResourceManager(): void
     {
         $this->assertInstanceOf(
             ExtMongoDbResourceManager::class,
@@ -47,7 +44,7 @@ class ExtMongoDbOptionsTest extends TestCase
         $this->assertSame($resourceManager, $this->object->getResourceManager());
     }
 
-    public function testGetResourceId()
+    public function testGetResourceId(): void
     {
         $this->assertEquals('default', $this->object->getResourceId());
 
@@ -58,7 +55,7 @@ class ExtMongoDbOptionsTest extends TestCase
         $this->assertEquals($resourceId, $this->object->getResourceId());
     }
 
-    public function testSetServer()
+    public function testSetServer(): void
     {
         $resourceManager = new ExtMongoDbResourceManager();
         $this->object->setResourceManager($resourceManager);
