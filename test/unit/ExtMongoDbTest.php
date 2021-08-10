@@ -8,10 +8,8 @@ use Laminas\Cache\Storage\FlushableInterface;
 
 use function getenv;
 
-/**
- * @covers Laminas\Cache\Storage\Adapter\ExtMongoDb<extended>
- */
-class ExtMongoDbTest extends AbstractCommonAdapterTest
+/** @template-extends AbstractCommonAdapterTest<ExtMongoDb,ExtMongoDbOptions> */
+final class ExtMongoDbTest extends AbstractCommonAdapterTest
 {
     public function setUp(): void
     {
@@ -35,18 +33,6 @@ class ExtMongoDbTest extends AbstractCommonAdapterTest
         }
 
         parent::tearDown();
-    }
-
-    public function getCommonAdapterNamesProvider(): array
-    {
-        return [
-            ['ext_mongo_db'],
-            ['extmongodb'],
-            ['extMongoDb'],
-            ['extMongoDB'],
-            ['ExtMongoDb'],
-            ['ExtMongoDB'],
-        ];
     }
 
     public function testSetOptionsNotMongoDbOptions(): void

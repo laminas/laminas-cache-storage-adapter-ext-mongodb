@@ -7,7 +7,6 @@ use Laminas\Cache\Exception;
 use Laminas\Cache\Storage\Capabilities;
 use Laminas\Cache\Storage\FlushableInterface;
 use MongoDB\BSON\UTCDateTime as MongoDate;
-use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 use stdClass;
@@ -15,8 +14,6 @@ use Traversable;
 
 use function array_key_exists;
 use function assert;
-use function class_exists;
-use function extension_loaded;
 use function get_class;
 use function gettype;
 use function is_array;
@@ -61,17 +58,10 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     private $namespacePrefix = '';
 
     /**
-     * @param  null|array|Traversable|AdapterOptions $options
-     * @throws Exception\ExtensionNotLoadedException
+     * @param null|array|Traversable|AdapterOptions|ExtMongoDbOptions $options
      */
     public function __construct($options = null)
     {
-        if (! extension_loaded('mongodb') || ! class_exists(Client::class)) {
-            throw new Exception\ExtensionNotLoadedException(
-                'mongodb extension not loaded or Mongo PHP client library not installed'
-            );
-        }
-
         parent::__construct($options);
 
         $initialized = &$this->initialized;

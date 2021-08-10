@@ -2,21 +2,25 @@
 
 namespace LaminasTest\Cache\Storage\Adapter;
 
+use Laminas\Cache\Storage\Adapter\AdapterOptions;
 use Laminas\Cache\Storage\Adapter\ExtMongoDbOptions;
 use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
-use PHPUnit\Framework\TestCase;
 
-/**
- * @covers Laminas\Cache\Storage\Adapter\ExtMongoDbOptions<extended>
- */
-class ExtMongoDbOptionsTest extends TestCase
+/** @template-extends AbstractAdapterOptionsTest<ExtMongoDbOptions> */
+final class ExtMongoDbOptionsTest extends AbstractAdapterOptionsTest
 {
+    protected function createAdapterOptions(): AdapterOptions
+    {
+        return new ExtMongoDbOptions();
+    }
+
     /** @var ExtMongoDbOptions */
     protected $object;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->object = new ExtMongoDbOptions();
+        $this->object = $this->createAdapterOptions();
+        parent::setUp();
     }
 
     public function testGetNamespaceSeparator(): void

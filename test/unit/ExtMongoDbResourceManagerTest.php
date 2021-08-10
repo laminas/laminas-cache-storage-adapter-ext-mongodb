@@ -11,10 +11,7 @@ use stdClass;
 
 use function getenv;
 
-/**
- * @covers Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager
- */
-class ExtMongoDbResourceManagerTest extends TestCase
+final class ExtMongoDbResourceManagerTest extends TestCase
 {
     /** @var ExtMongoDbResourceManager */
     protected $object;
