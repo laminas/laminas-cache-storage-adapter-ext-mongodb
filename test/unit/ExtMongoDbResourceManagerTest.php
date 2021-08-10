@@ -28,12 +28,14 @@ class ExtMongoDbResourceManagerTest extends TestCase
     /** @var string */
     private $collectionName;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->object         = new ExtMongoDbResourceManager();
         $this->connectString  = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING');
         $this->database       = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE');
         $this->collectionName = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION');
+
+        parent::setUp();
     }
 
     public function testSetResourceAlreadyCreated(): void
