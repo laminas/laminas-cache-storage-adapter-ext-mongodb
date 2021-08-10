@@ -4,6 +4,7 @@ namespace LaminasTest\Cache\Psr\SimpleCache;
 
 use Cache\IntegrationTests\SimpleCacheTest;
 use Laminas\Cache\Psr\SimpleCache\SimpleCacheDecorator;
+use Laminas\Cache\Storage\Adapter\ExtMongoDb;
 use Laminas\Cache\Storage\PluginAwareInterface;
 use Laminas\Cache\StorageFactory;
 use Psr\SimpleCache\CacheInterface;
@@ -21,15 +22,6 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
      */
     private $tz;
 
-    /** @var string */
-    private $connectString;
-
-    /** @var string */
-    private $databaseName;
-
-    /** @var string */
-    private $collection;
-
     protected function setUp(): void
     {
         // set non-UTC timezone
@@ -40,10 +32,6 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
         $this->skippedTests['testBasicUsageWithLongKey'] = 'SimpleCacheDecorator requires keys to be <= 64 chars';
         /** @psalm-suppress MixedArrayAssignment */
         $this->skippedTests['testBinaryData'] = 'Binary data not supported';
-
-        $this->connectString = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING');
-        $this->databaseName  = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE');
-        $this->collection    = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION');
 
         parent::setUp();
     }
@@ -57,11 +45,12 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
 
     public function createSimpleCache(): CacheInterface
     {
-        $storage    = StorageFactory::adapterFactory('extmongodb', [
-            'server'     => $this->connectString,
-            'database'   => $this->databaseName,
-            'collection' => $this->collection,
+        $storage = new ExtMongoDb([
+            'server'     => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
+            'database'   => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
+            'collection' => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
+
         $serializer = StorageFactory::pluginFactory('serializer');
         self::assertInstanceOf(PluginAwareInterface::class, $storage);
         $storage->addPlugin($serializer);

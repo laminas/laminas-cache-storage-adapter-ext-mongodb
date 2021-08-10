@@ -4,9 +4,9 @@ namespace LaminasTest\Cache\Psr\CacheItemPool;
 
 use Cache\IntegrationTests\CachePoolTest;
 use Laminas\Cache\Psr\CacheItemPool\CacheItemPoolDecorator;
+use Laminas\Cache\Storage\Adapter\ExtMongoDb;
 use Laminas\Cache\Storage\Plugin\Serializer;
 use Laminas\Cache\Storage\PluginAwareInterface;
-use Laminas\Cache\StorageFactory;
 use Psr\Cache\CacheItemPoolInterface;
 
 use function date_default_timezone_get;
@@ -24,23 +24,11 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
      */
     private $tz;
 
-    /** @var string */
-    private $connectString;
-
-    /** @var string */
-    private $databaseName;
-
-    /** @var string */
-    private $collection;
-
     protected function setUp(): void
     {
         // set non-UTC timezone
         $this->tz = date_default_timezone_get();
         date_default_timezone_set('America/Vancouver');
-        $this->connectString = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING');
-        $this->databaseName  = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE');
-        $this->collection    = (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION');
 
         parent::setUp();
     }
@@ -54,11 +42,12 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
 
     public function createCachePool(): CacheItemPoolInterface
     {
-        $storage = StorageFactory::adapterFactory('extmongodb', [
-            'server'     => $this->connectString,
-            'database'   => $this->databaseName,
-            'collection' => $this->collection,
+        $storage = new ExtMongoDb([
+            'server'     => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
+            'database'   => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
+            'collection' => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
+
         self::assertInstanceOf(PluginAwareInterface::class, $storage);
         $storage->addPlugin(new Serializer());
 
