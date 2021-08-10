@@ -4,7 +4,6 @@ namespace LaminasTest\Cache\Storage\Adapter;
 
 use Laminas\Cache\Storage\Adapter\ExtMongoDbOptions;
 use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
-use MongoDB\Client;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,9 +11,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExtMongoDbOptionsTest extends TestCase
 {
-    /**
-     * @var ExtMongoDbOptions
-     */
+    /** @var ExtMongoDbOptions */
     protected $object;
 
     public function setUp(): void

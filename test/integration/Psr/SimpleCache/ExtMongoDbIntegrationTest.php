@@ -3,17 +3,19 @@
 namespace LaminasTest\Cache\Psr\SimpleCache;
 
 use Cache\IntegrationTests\SimpleCacheTest;
-use Laminas\Cache\Exception;
 use Laminas\Cache\Psr\SimpleCache\SimpleCacheDecorator;
-use Laminas\Cache\Storage\Adapter\ExtMongoDbOptions;
 use Laminas\Cache\StorageFactory;
-use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
-use MongoDB\Client;
+use Psr\SimpleCache\CacheInterface;
+
+use function date_default_timezone_get;
+use function date_default_timezone_set;
+use function getenv;
 
 class ExtMongoDbIntegrationTest extends SimpleCacheTest
 {
     /**
      * Backup default timezone
+     *
      * @var string
      */
     private $tz;
@@ -25,7 +27,7 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
         date_default_timezone_set('America/Vancouver');
 
         $this->skippedTests['testBasicUsageWithLongKey'] = 'SimpleCacheDecorator requires keys to be <= 64 chars';
-        $this->skippedTests['testBinaryData'] = 'Binary data not supported';
+        $this->skippedTests['testBinaryData']            = 'Binary data not supported';
 
         parent::setUp();
     }
@@ -37,9 +39,9 @@ class ExtMongoDbIntegrationTest extends SimpleCacheTest
         parent::tearDown();
     }
 
-    public function createSimpleCache()
+    public function createSimpleCache(): CacheInterface
     {
-        $storage = StorageFactory::adapterFactory('extmongodb', [
+        $storage    = StorageFactory::adapterFactory('extmongodb', [
             'server'     => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
             'database'   => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
             'collection' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),

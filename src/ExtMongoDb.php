@@ -2,6 +2,7 @@
 
 namespace Laminas\Cache\Storage\Adapter;
 
+use ArrayObject;
 use Laminas\Cache\Exception;
 use Laminas\Cache\Storage\Capabilities;
 use Laminas\Cache\Storage\FlushableInterface;
@@ -10,6 +11,17 @@ use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 use stdClass;
+
+use function array_key_exists;
+use function class_exists;
+use function extension_loaded;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_object;
+use function microtime;
+use function round;
+use function sprintf;
 
 /**
  * Cache storage adapter for ext-mongodb
@@ -61,11 +73,11 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
         parent::__construct($options);
 
-        $initialized = & $this->initialized;
+        $initialized = &$this->initialized;
 
         $this->getEventManager()->attach(
             'option',
-            function () use (& $initialized) {
+            function () use (&$initialized) {
                 $initialized = false;
             }
         );
@@ -84,7 +96,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             $this->resourceManager = $options->getResourceManager();
             $this->resourceId      = $options->getResourceId();
             $namespace             = $options->getNamespace();
-            $this->namespacePrefix = ($namespace === '' ? '' : $namespace . $options->getNamespaceSeparator());
+            $this->namespacePrefix = $namespace === '' ? '' : $namespace . $options->getNamespaceSeparator();
             $this->initialized     = true;
         }
 
@@ -107,6 +119,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      * Get options.
      *
      * @see    setOptions()
+     *
      * @return ExtMongoDbOptions
      */
     public function getOptions()
@@ -119,7 +132,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function internalGetItem(& $normalizedKey, & $success = null, & $casToken = null)
+    protected function internalGetItem(&$normalizedKey, &$success = null, &$casToken = null)
     {
         $result  = $this->fetchFromCollection($normalizedKey);
         $success = false;
@@ -163,9 +176,9 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     /**
      * @param mixed $result
      */
-    private static function ensureArrayType(& $result): void
+    private static function ensureArrayType(&$result): void
     {
-        if ($result instanceof \ArrayObject) {
+        if ($result instanceof ArrayObject) {
             $result = $result->getArrayCopy();
         }
 
@@ -183,19 +196,19 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function internalSetItem(& $normalizedKey, & $value)
+    protected function internalSetItem(&$normalizedKey, &$value)
     {
         $mongo     = $this->getMongoCollection();
         $key       = $this->namespacePrefix . $normalizedKey;
         $ttl       = $this->getOptions()->getTTl();
         $expires   = null;
         $cacheItem = [
-            'key' => $key,
+            'key'   => $key,
             'value' => $value,
         ];
 
         if ($ttl > 0) {
-            $ttlSeconds = round((microtime(true) + $ttl) * 1000);
+            $ttlSeconds           = round((microtime(true) + $ttl) * 1000);
             $cacheItem['expires'] = new MongoDate($ttlSeconds);
         }
 
@@ -214,7 +227,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function internalRemoveItem(& $normalizedKey)
+    protected function internalRemoveItem(&$normalizedKey)
     {
         try {
             $result = $this->getMongoCollection()->deleteOne(['key' => $this->namespacePrefix . $normalizedKey]);
@@ -243,7 +256,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             return $this->capabilities;
         }
 
-        return $this->capabilities = new Capabilities(
+        return $this->capabilities  = new Capabilities(
             $this,
             $this->capabilityMarker = new stdClass(),
             [
@@ -273,7 +286,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\ExceptionInterface
      */
-    protected function internalGetMetadata(& $normalizedKey)
+    protected function internalGetMetadata(&$normalizedKey)
     {
         $result = $this->fetchFromCollection($normalizedKey);
         return null !== $result ? ['_id' => $result['_id']] : false;
@@ -283,12 +296,10 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      * Return raw records from MongoCollection
      *
      * @param string $normalizedKey
-     *
      * @return array|null
-     *
      * @throws Exception\RuntimeException
      */
-    private function fetchFromCollection(& $normalizedKey)
+    private function fetchFromCollection(&$normalizedKey)
     {
         try {
             return $this->getMongoCollection()->findOne(['key' => $this->namespacePrefix . $normalizedKey]);
