@@ -4,8 +4,9 @@ namespace LaminasTest\Cache\Psr\CacheItemPool;
 
 use Cache\IntegrationTests\CachePoolTest;
 use Laminas\Cache\Psr\CacheItemPool\CacheItemPoolDecorator;
+use Laminas\Cache\Storage\Adapter\ExtMongoDb;
 use Laminas\Cache\Storage\Plugin\Serializer;
-use Laminas\Cache\StorageFactory;
+use Laminas\Cache\Storage\PluginAwareInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 use function date_default_timezone_get;
@@ -41,19 +42,23 @@ class ExtMongoDbIntegrationTest extends CachePoolTest
 
     public function createCachePool(): CacheItemPoolInterface
     {
-        $storage = StorageFactory::adapterFactory('extmongodb', [
-            'server'     => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
-            'database'   => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
-            'collection' => getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
+        $storage = new ExtMongoDb([
+            'server'     => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_CONNECTSTRING'),
+            'database'   => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_DATABASE'),
+            'collection' => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
+
+        self::assertInstanceOf(PluginAwareInterface::class, $storage);
         $storage->addPlugin(new Serializer());
 
-        $deferredSkippedMessage                                                 = sprintf(
+        $deferredSkippedMessage = sprintf(
             '%s storage doesn\'t support driver deferred',
             get_class($storage)
         );
+        /** @psalm-suppress MixedArrayAssignment */
         $this->skippedTests['testHasItemReturnsFalseWhenDeferredItemIsExpired'] = $deferredSkippedMessage;
-        $this->skippedTests['testBinaryData']                                   = 'Binary data not supported';
+        /** @psalm-suppress MixedArrayAssignment */
+        $this->skippedTests['testBinaryData'] = 'Binary data not supported';
 
         return new CacheItemPoolDecorator($storage);
     }

@@ -11,8 +11,10 @@ use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 use stdClass;
+use Traversable;
 
 use function array_key_exists;
+use function assert;
 use function class_exists;
 use function extension_loaded;
 use function get_class;
@@ -59,8 +61,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     private $namespacePrefix = '';
 
     /**
-     * {@inheritDoc}
-     *
+     * @param  null|array|Traversable|AdapterOptions $options
      * @throws Exception\ExtensionNotLoadedException
      */
     public function __construct($options = null)
@@ -85,34 +86,28 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
     /**
      * get mongodb resource
-     *
-     * @return Collection
      */
-    private function getMongoCollection()
+    private function getMongoCollection(): Collection
     {
-        if (! $this->initialized) {
-            $options = $this->getOptions();
-
-            $this->resourceManager = $options->getResourceManager();
-            $this->resourceId      = $options->getResourceId();
-            $namespace             = $options->getNamespace();
-            $this->namespacePrefix = $namespace === '' ? '' : $namespace . $options->getNamespaceSeparator();
-            $this->initialized     = true;
-        }
-
-        return $this->resourceManager->getResource($this->resourceId);
+        $this->initialize();
+        $resourceId = $this->resourceId;
+        assert($resourceId !== null);
+        return $this->resourceManager->getResource($resourceId);
     }
 
     /**
-     * {@inheritDoc}
+     * @param  array|Traversable|AdapterOptions|ExtMongoDbOptions $options
+     * @return $this
      */
     public function setOptions($options)
     {
-        return parent::setOptions(
-            $options instanceof ExtMongoDbOptions
-            ? $options
-            : new ExtMongoDbOptions($options)
-        );
+        if (! $options instanceof ExtMongoDbOptions) {
+            /** @psalm-suppress PossiblyInvalidArgument */
+            $options = new ExtMongoDbOptions($options);
+        }
+
+        parent::setOptions($options);
+        return $this;
     }
 
     /**
@@ -124,7 +119,13 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      */
     public function getOptions()
     {
-        return $this->options;
+        $options = parent::getOptions();
+        if (! $options instanceof ExtMongoDbOptions) {
+            $options = new ExtMongoDbOptions($options->toArray());
+            $this->setOptions($options);
+        }
+
+        return $options;
     }
 
     /**
@@ -138,7 +139,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
         $success = false;
 
         if (null === $result) {
-            return;
+            return null;
         }
 
         self::ensureArrayType($result);
@@ -201,7 +202,6 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
         $mongo     = $this->getMongoCollection();
         $key       = $this->namespacePrefix . $normalizedKey;
         $ttl       = $this->getOptions()->getTTl();
-        $expires   = null;
         $cacheItem = [
             'key'   => $key,
             'value' => $value,
@@ -295,16 +295,30 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     /**
      * Return raw records from MongoCollection
      *
-     * @param string $normalizedKey
-     * @return array|null
+     * @return array|null|object
      * @throws Exception\RuntimeException
      */
-    private function fetchFromCollection(&$normalizedKey)
+    private function fetchFromCollection(string $normalizedKey)
     {
         try {
             return $this->getMongoCollection()->findOne(['key' => $this->namespacePrefix . $normalizedKey]);
         } catch (MongoDriverException $e) {
             throw new Exception\RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    private function initialize(): void
+    {
+        if ($this->initialized) {
+            return;
+        }
+
+        $options = $this->getOptions();
+
+        $this->resourceManager = $options->getResourceManager();
+        $this->resourceId      = $options->getResourceId();
+        $namespace             = $options->getNamespace();
+        $this->namespacePrefix = $namespace === '' ? '' : $namespace . $options->getNamespaceSeparator();
+        $this->initialized     = true;
     }
 }
