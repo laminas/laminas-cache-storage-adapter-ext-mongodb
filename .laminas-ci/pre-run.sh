@@ -8,4 +8,4 @@ if ! [[ "${PHP_VERSION}" =~ 8\.1 ]]; then
     exit 0;
 fi
 
-composer require mongodb/mongodb:dev-master
+composer require mongodb/mongodb:dev-master --ignore-platform-req=php
