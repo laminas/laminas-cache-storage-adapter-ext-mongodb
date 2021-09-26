@@ -7,9 +7,9 @@
   ],
   "license": "BSD-3-Clause",
   "require": {
-    "php": "^7.3 || ~8.0.0",
-    "ext-mongodb": "^1.8",
-    "mongodb/mongodb": "^1.8"
+    "php": "^7.3 || ~8.0.0 || ~8.1.0",
+    "ext-mongodb": "^1.10",
+    "mongodb/mongodb": "^1.9"
   },
   "provide": {
     "laminas/laminas-cache-storage-implementation": "1.0"
