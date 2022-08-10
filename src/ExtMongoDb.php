@@ -147,7 +147,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
             if ($result['expires']->toDateTime() < (new MongoDate())->toDateTime()) {
                 $this->internalRemoveItem($normalizedKey);
-                return;
+                return null;
             }
         }
 
@@ -198,7 +198,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
         ];
 
         if ($ttl > 0) {
-            $ttlSeconds           = round((microtime(true) + $ttl) * 1000);
+            $ttlSeconds           = (int) round((microtime(true) + $ttl) * 1000);
             $cacheItem['expires'] = new MongoDate($ttlSeconds);
         }
 

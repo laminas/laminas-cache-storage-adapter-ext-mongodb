@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Cache\Storage\Adapter\Psr\CacheItemPool;
 
 use Laminas\Cache\Storage\Adapter\ExtMongoDb;
@@ -16,14 +18,12 @@ class ExtMongoDbIntegrationTest extends AbstractCacheItemPoolIntegrationTest
     protected function setUp(): void
     {
         parent::setUp();
-        $deferredSkippedMessage = sprintf(
+        $deferredSkippedMessage                                                 = sprintf(
             '%s storage doesn\'t support driver deferred',
             ExtMongoDb::class
         );
-        /** @psalm-suppress MixedArrayAssignment */
         $this->skippedTests['testHasItemReturnsFalseWhenDeferredItemIsExpired'] = $deferredSkippedMessage;
-        /** @psalm-suppress MixedArrayAssignment */
-        $this->skippedTests['testBinaryData'] = 'Binary data not supported';
+        $this->skippedTests['testBinaryData']                                   = 'Binary data not supported';
     }
 
     protected function createStorage(): StorageInterface

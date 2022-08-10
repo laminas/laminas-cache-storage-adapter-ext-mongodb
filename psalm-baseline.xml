@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.10.0@916b098b008f6de4543892b1e0651c1c3b92cbfa">
+<files psalm-version="4.26.0@6998fabb2bf528b65777bf9941920888d23c03ac">
   <file src="src/ExtMongoDb.php">
-    <InvalidScalarArgument occurrences="4">
-      <code>$e-&gt;getCode()</code>
-      <code>$e-&gt;getCode()</code>
-      <code>$e-&gt;getCode()</code>
-      <code>$ttlSeconds</code>
-    </InvalidScalarArgument>
     <MixedArgument occurrences="2">
       <code>$result</code>
       <code>$result['expires']</code>
     </MixedArgument>
-    <MixedArrayAccess occurrences="8">
+    <MixedArrayAccess occurrences="6">
       <code>$result['_id']</code>
       <code>$result['_id']</code>
       <code>$result['expires']</code>
@@ -19,7 +13,6 @@
       <code>$result['expires']</code>
       <code>$result['expires']</code>
       <code>$result['expires']</code>
-      <code>$result['value']</code>
     </MixedArrayAccess>
     <MixedAssignment occurrences="2">
       <code>$casToken</code>
@@ -46,8 +39,5 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_array($resource)</code>
     </DocblockTypeContradiction>
-    <InvalidScalarArgument occurrences="1">
-      <code>$e-&gt;getCode()</code>
-    </InvalidScalarArgument>
   </file>
 </files>
