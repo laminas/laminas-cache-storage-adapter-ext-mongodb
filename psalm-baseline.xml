@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.26.0@6998fabb2bf528b65777bf9941920888d23c03ac">
   <file src="src/ExtMongoDb.php">
-    <MixedArgument occurrences="2">
-      <code>$result</code>
-      <code>$result['expires']</code>
-    </MixedArgument>
-    <MixedArrayAccess occurrences="6">
-      <code>$result['_id']</code>
-      <code>$result['_id']</code>
-      <code>$result['expires']</code>
-      <code>$result['expires']</code>
-      <code>$result['expires']</code>
-      <code>$result['expires']</code>
-      <code>$result['expires']</code>
-    </MixedArrayAccess>
     <MixedAssignment occurrences="2">
       <code>$casToken</code>
       <code>$value</code>
     </MixedAssignment>
-    <MixedMethodCall occurrences="1">
-      <code>toDateTime</code>
-    </MixedMethodCall>
     <PossiblyInvalidArrayAccess occurrences="1">
       <code>$result['_id']</code>
     </PossiblyInvalidArrayAccess>
