@@ -132,7 +132,9 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             return null;
         }
 
-        self::ensureArrayType($result);
+        if ($this->ensureArrayType($result) === false) {
+            $result = [];
+        }
 
         if (isset($result['expires'])) {
             if (! $result['expires'] instanceof MongoDate) {
@@ -147,7 +149,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
             if ($result['expires']->toDateTime() < (new MongoDate())->toDateTime()) {
                 $this->internalRemoveItem($normalizedKey);
-                return;
+                return null;
             }
         }
 
@@ -166,20 +168,24 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
     /**
      * @param mixed $result
+     * @param-out array|mixed $result
+     * @psalm-assert-if-true array $result
      */
-    private static function ensureArrayType(&$result): void
+    private function ensureArrayType(&$result): bool
     {
         if ($result instanceof ArrayObject) {
             $result = $result->getArrayCopy();
         }
 
         if (! is_array($result)) {
-            return;
+            return false;
         }
 
         foreach ($result as &$value) {
-            self::ensureArrayType($value);
+            $this->ensureArrayType($value);
         }
+
+        return true;
     }
 
     /**
@@ -198,7 +204,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
         ];
 
         if ($ttl > 0) {
-            $ttlSeconds           = round((microtime(true) + $ttl) * 1000);
+            $ttlSeconds           = (int) round((microtime(true) + $ttl) * 1000);
             $cacheItem['expires'] = new MongoDate($ttlSeconds);
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaminasTest\Cache\Storage\Adapter\Psr\SimpleCache;
 
 use Laminas\Cache\Storage\Adapter\ExtMongoDb;
@@ -14,10 +16,8 @@ class ExtMongoDbIntegrationTest extends AbstractSimpleCacheIntegrationTest
 {
     protected function setUp(): void
     {
-        /** @psalm-suppress MixedArrayAssignment */
         $this->skippedTests['testBasicUsageWithLongKey'] = 'SimpleCacheDecorator requires keys to be <= 64 chars';
-        /** @psalm-suppress MixedArrayAssignment */
-        $this->skippedTests['testBinaryData'] = 'Binary data not supported';
+        $this->skippedTests['testBinaryData']            = 'Binary data not supported';
 
         parent::setUp();
     }

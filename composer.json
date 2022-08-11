@@ -7,26 +7,30 @@
   ],
   "license": "BSD-3-Clause",
   "require": {
-    "php": "^7.3 || ~8.0.0 || ~8.1.0",
+    "php": "~7.4.0 || ~8.0.0 || ~8.1.0",
     "ext-mongodb": "^1.10",
-    "mongodb/mongodb": "^1.9"
+    "laminas/laminas-cache": "^3.2",
+    "mongodb/mongodb": "^1.12"
   },
   "provide": {
     "laminas/laminas-cache-storage-implementation": "1.0"
   },
   "require-dev": {
-    "laminas/laminas-cache": "3.0.x-dev",
-    "laminas/laminas-cache-storage-adapter-test": "2.0.x-dev",
+    "boesing/psalm-plugin-stringf": "^1.2",
+    "laminas/laminas-cache-storage-adapter-test": "^2.3",
     "laminas/laminas-coding-standard": "~2.2.0",
     "laminas/laminas-serializer": "^2.10.1",
     "psalm/plugin-phpunit": "^0.16.1",
     "vimeo/psalm": "^4.9"
   },
-  "suggest": {
-    "mongodb/mongodb": "MongoDB, to use the ExtMongoDb storage adapter"
+  "conflict": {
+    "laminas/laminas-servicemanager": "<3.11"
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   },
   "extra": {
     "laminas": {
