@@ -10,7 +10,7 @@
     "php": "~7.4.0 || ~8.0.0 || ~8.1.0",
     "ext-mongodb": "^1.10",
     "laminas/laminas-cache": "^3.2",
-    "mongodb/mongodb": "^1.9"
+    "mongodb/mongodb": "^1.12"
   },
   "provide": {
     "laminas/laminas-cache-storage-implementation": "1.0"
