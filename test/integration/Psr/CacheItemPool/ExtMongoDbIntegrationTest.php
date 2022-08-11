@@ -15,6 +15,8 @@ use function sprintf;
 
 class ExtMongoDbIntegrationTest extends AbstractCacheItemPoolIntegrationTest
 {
+    private const LONG_KEY_SUPPORT_POSTPONED = 'Long key support will be provided with a dedicated ticket.';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,6 +26,7 @@ class ExtMongoDbIntegrationTest extends AbstractCacheItemPoolIntegrationTest
         );
         $this->skippedTests['testHasItemReturnsFalseWhenDeferredItemIsExpired'] = $deferredSkippedMessage;
         $this->skippedTests['testBinaryData']                                   = 'Binary data not supported';
+        $this->skippedTests['testBasicUsageWithLongKey']                        = self::LONG_KEY_SUPPORT_POSTPONED;
     }
 
     protected function createStorage(): StorageInterface
