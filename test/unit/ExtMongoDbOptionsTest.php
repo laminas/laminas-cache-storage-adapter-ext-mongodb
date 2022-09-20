@@ -16,8 +16,7 @@ final class ExtMongoDbOptionsTest extends AbstractAdapterOptionsTest
         return new ExtMongoDbOptions();
     }
 
-    /** @var ExtMongoDbOptions */
-    protected $object;
+    private ExtMongoDbOptions $object;
 
     protected function setUp(): void
     {

@@ -15,17 +15,13 @@ use function getenv;
 
 final class ExtMongoDbResourceManagerTest extends TestCase
 {
-    /** @var ExtMongoDbResourceManager */
-    protected $object;
+    private ExtMongoDbResourceManager $object;
 
-    /** @var string */
-    private $connectString;
+    private string $connectString;
 
-    /** @var string */
-    private $database;
+    private string $database;
 
-    /** @var string */
-    private $collectionName;
+    private string $collectionName;
 
     protected function setUp(): void
     {

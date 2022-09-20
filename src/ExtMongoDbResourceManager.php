@@ -29,7 +29,7 @@ class ExtMongoDbResourceManager
      *
      * @var array[]
      */
-    private $resources = [];
+    private array $resources = [];
 
     /**
      * Check if a resource exists

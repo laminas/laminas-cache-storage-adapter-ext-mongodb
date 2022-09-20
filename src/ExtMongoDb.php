@@ -6,6 +6,7 @@ namespace Laminas\Cache\Storage\Adapter;
 
 use ArrayObject;
 use Laminas\Cache\Exception;
+use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
 use Laminas\Cache\Storage\Capabilities;
 use Laminas\Cache\Storage\FlushableInterface;
 use MongoDB\BSON\UTCDateTime as MongoDate;
@@ -33,31 +34,23 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 {
     /**
      * Has this instance be initialized
-     *
-     * @var bool
      */
-    private $initialized = false;
+    private bool $initialized = false;
 
     /**
      * the mongodb resource manager
-     *
-     * @var null|ExtMongoDbResourceManager
      */
-    private $resourceManager;
+    private ?ExtMongoDbResourceManager $resourceManager = null;
 
     /**
      * The mongodb resource id
-     *
-     * @var null|string
      */
-    private $resourceId;
+    private ?string $resourceId = null;
 
     /**
      * The namespace prefix
-     *
-     * @var string
      */
-    private $namespacePrefix = '';
+    private string $namespacePrefix = '';
 
     /**
      * @param null|array|Traversable|AdapterOptions|ExtMongoDbOptions $options
@@ -70,7 +63,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
         $this->getEventManager()->attach(
             'option',
-            function () use (&$initialized) {
+            static function () use (&$initialized): void {
                 $initialized = false;
             }
         );
