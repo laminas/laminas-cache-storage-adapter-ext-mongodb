@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\Cache\Storage\Adapter;
 
+use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
+
 /**
  * Options for the ext-mongodb adapter implementation.
  *
@@ -23,27 +25,20 @@ class ExtMongoDbOptions extends AdapterOptions
         'resource_id'
     ];
     // @codingStandardsIgnoreEnd
-
     /**
      * The namespace separator
-     *
-     * @var string
      */
-    private $namespaceSeparator = ':';
+    private string $namespaceSeparator = ':';
 
     /**
      * The ext-mongodb resource manager
-     *
-     * @var null|ExtMongoDbResourceManager
      */
-    private $resourceManager;
+    private ?ExtMongoDbResourceManager $resourceManager = null;
 
     /**
      * The resource id of the resource manager
-     *
-     * @var string
      */
-    private $resourceId = 'default';
+    private string $resourceId = 'default';
 
     /**
      * Set namespace separator
