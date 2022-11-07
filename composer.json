@@ -7,7 +7,7 @@
   ],
   "license": "BSD-3-Clause",
   "require": {
-    "php": "~7.4.0 || ~8.0.0 || ~8.1.0",
+    "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
     "ext-mongodb": "^1.10",
     "laminas/laminas-cache": "^3.2",
     "mongodb/mongodb": "^1.12"
@@ -32,7 +32,7 @@
       "dealerdirect/phpcodesniffer-composer-installer": true
     },
     "platform": {
-      "php": "7.4.99"
+      "php": "8.0.99"
     }
   },
   "extra": {
