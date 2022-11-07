@@ -10,7 +10,6 @@ use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 
 use function assert;
-use function get_class;
 use function gettype;
 use function is_array;
 use function is_object;
@@ -66,7 +65,7 @@ class ExtMongoDbResourceManager
                 '%s expects an array or %s; received %s',
                 __METHOD__,
                 Collection::class,
-                is_object($resource) ? get_class($resource) : gettype($resource)
+                is_object($resource) ? $resource::class : gettype($resource)
             ));
         }
 
