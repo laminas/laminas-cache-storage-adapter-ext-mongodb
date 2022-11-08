@@ -10,9 +10,8 @@ use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 
 use function assert;
-use function gettype;
+use function get_debug_type;
 use function is_array;
-use function is_object;
 use function is_string;
 use function sprintf;
 
@@ -65,7 +64,7 @@ class ExtMongoDbResourceManager
                 '%s expects an array or %s; received %s',
                 __METHOD__,
                 Collection::class,
-                is_object($resource) ? $resource::class : gettype($resource)
+                get_debug_type($resource)
             ));
         }
 
@@ -153,7 +152,6 @@ class ExtMongoDbResourceManager
 
     /**
      * @param string $id
-     * @param array $connectionOptions
      * @return void
      */
     public function setConnectionOptions($id, array $connectionOptions)
@@ -185,7 +183,6 @@ class ExtMongoDbResourceManager
 
     /**
      * @param string $id
-     * @param array $driverOptions
      * @return void
      */
     public function setDriverOptions($id, array $driverOptions)
