@@ -17,10 +17,8 @@ use Traversable;
 
 use function array_key_exists;
 use function assert;
-use function get_class;
-use function gettype;
+use function get_debug_type;
 use function is_array;
-use function is_object;
 use function microtime;
 use function round;
 use function sprintf;
@@ -138,7 +136,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
                     . ": the field 'expired' isn't an instance of MongoDate, '%s' found instead",
                     (string) $result['_id'],
                     $this->namespacePrefix . $normalizedKey,
-                    is_object($result['expires']) ? get_class($result['expires']) : gettype($result['expires'])
+                    get_debug_type($result['expires'])
                 ));
             }
 
@@ -162,11 +160,10 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     }
 
     /**
-     * @param mixed $result
      * @param-out array|mixed $result
      * @psalm-assert-if-true array $result
      */
-    private function ensureArrayType(&$result): bool
+    private function ensureArrayType(mixed &$result): bool
     {
         if ($result instanceof ArrayObject) {
             $result = $result->getArrayCopy();

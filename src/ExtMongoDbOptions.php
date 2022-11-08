@@ -137,7 +137,6 @@ class ExtMongoDbOptions extends AdapterOptions
     }
 
     /**
-     * @param array $connectionOptions
      * @return $this Provides a fluent interface
      */
     public function setConnectionOptions(array $connectionOptions)
