@@ -7,7 +7,7 @@
   ],
   "license": "BSD-3-Clause",
   "require": {
-    "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
+    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
     "ext-mongodb": "^1.10",
     "laminas/laminas-cache": "^3.2",
     "mongodb/mongodb": "^1.12"
@@ -16,12 +16,12 @@
     "laminas/laminas-cache-storage-implementation": "1.0"
   },
   "require-dev": {
-    "boesing/psalm-plugin-stringf": "^1.2",
-    "laminas/laminas-cache-storage-adapter-test": "^2.3",
-    "laminas/laminas-coding-standard": "^2.3",
-    "laminas/laminas-serializer": "^2.10.1",
-    "psalm/plugin-phpunit": "^0.18.0",
-    "vimeo/psalm": "^4.9"
+    "boesing/psalm-plugin-stringf": "^1.4",
+    "laminas/laminas-cache-storage-adapter-test": "^2.5",
+    "laminas/laminas-coding-standard": "^2.5",
+    "laminas/laminas-serializer": "^2.17.0",
+    "psalm/plugin-phpunit": "^0.18.4",
+    "vimeo/psalm": "^4.30"
   },
   "conflict": {
     "laminas/laminas-servicemanager": "<3.11"
@@ -32,7 +32,7 @@
       "dealerdirect/phpcodesniffer-composer-installer": true
     },
     "platform": {
-      "php": "8.0.99"
+      "php": "8.1.99"
     }
   },
   "extra": {
