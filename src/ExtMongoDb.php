@@ -116,7 +116,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function internalGetItem(&$normalizedKey, &$success = null, &$casToken = null)
+    protected function internalGetItem(&$normalizedKey, &$success = null, mixed &$casToken = null)
     {
         $result  = $this->fetchFromCollection($normalizedKey);
         $success = false;
@@ -185,7 +185,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function internalSetItem(&$normalizedKey, &$value)
+    protected function internalSetItem(&$normalizedKey, mixed &$value)
     {
         $mongo     = $this->getMongoCollection();
         $key       = $this->namespacePrefix . $normalizedKey;
