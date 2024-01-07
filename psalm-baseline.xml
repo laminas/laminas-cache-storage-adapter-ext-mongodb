@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.26.0@6998fabb2bf528b65777bf9941920888d23c03ac">
+<files psalm-version="5.18.0@b113f3ed0259fd6e212d87c3df80eec95a6abf19">
   <file src="src/ExtMongoDb.php">
-    <MixedAssignment occurrences="2">
+    <MixedAssignment>
       <code>$casToken</code>
       <code>$value</code>
     </MixedAssignment>
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$result['_id']</code>
+    <PossiblyInvalidArrayAccess>
+      <code><![CDATA[$result['_id']]]></code>
     </PossiblyInvalidArrayAccess>
-    <PossiblyNullReference occurrences="1">
+    <PossiblyNullReference>
       <code>getResource</code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor occurrences="1">
+    <PropertyNotSetInConstructor>
       <code>ExtMongoDb</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="2">
+    <RedundantConditionGivenDocblockType>
       <code>null !== $result</code>
       <code>null !== $result</code>
     </RedundantConditionGivenDocblockType>
+    <UnsupportedPropertyReferenceUsage>
+      <code><![CDATA[$initialized = &$this->initialized]]></code>
+    </UnsupportedPropertyReferenceUsage>
+  </file>
+  <file src="src/ExtMongoDb/AdapterPluginManagerDelegatorFactory.php">
+    <UnusedParam>
+      <code>$container</code>
+      <code>$name</code>
+    </UnusedParam>
+  </file>
+  <file src="src/ExtMongoDb/Module.php">
+    <UnusedClass>
+      <code>Module</code>
+    </UnusedClass>
+  </file>
+  <file src="src/ExtMongoDbOptions.php">
+    <PossiblyUnusedMethod>
+      <code>setCollection</code>
+      <code>setConnectionOptions</code>
+      <code>setDatabase</code>
+      <code>setDriverOptions</code>
+    </PossiblyUnusedMethod>
   </file>
   <file src="src/ExtMongoDbResourceManager.php">
-    <DocblockTypeContradiction occurrences="1">
+    <DocblockTypeContradiction>
       <code>is_array($resource)</code>
     </DocblockTypeContradiction>
   </file>
