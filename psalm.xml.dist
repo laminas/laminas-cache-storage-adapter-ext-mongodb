@@ -26,5 +26,5 @@
     </issueHandlers>
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
-    <pluginClass class="Boesing\PsalmPluginStringf\Plugin"/></plugins>
+    </plugins>
 </psalm>
