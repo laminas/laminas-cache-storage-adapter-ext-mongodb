@@ -159,7 +159,7 @@ final class ExtMongoDb extends AbstractMetadataCapableAdapter implements Flushab
     }
 
     /**
-     * @psalm-assert-if-true array{_id:ObjectIdInterface|non-empty-string,...} $result
+     * @psalm-assert-if-true array{_id:ObjectIdInterface,...} $result
      */
     private function ensureArrayType(mixed &$result): bool
     {
