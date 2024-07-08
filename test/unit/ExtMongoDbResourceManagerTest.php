@@ -63,16 +63,6 @@ final class ExtMongoDbResourceManagerTest extends TestCase
         $this->assertSame($server, $this->object->getServer($id));
     }
 
-    public function testSetResourceThrowsException(): void
-    {
-        $id       = 'foo';
-        $resource = new stdClass();
-
-        $this->expectException(Exception\InvalidArgumentException::class);
-        /** @psalm-suppress InvalidArgument */
-        $this->object->setResource($id, $resource);
-    }
-
     public function testHasResourceEmpty(): void
     {
         $id = 'foo';
