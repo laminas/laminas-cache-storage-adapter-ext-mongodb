@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.18.0@b113f3ed0259fd6e212d87c3df80eec95a6abf19">
+<files psalm-version="5.25.0@01a8eb06b9e9cc6cfb6a320bf9fb14331919d505">
   <file src="src/ExtMongoDb.php">
     <MixedAssignment>
-      <code>$casToken</code>
-      <code>$value</code>
+      <code><![CDATA[$casToken]]></code>
     </MixedAssignment>
-    <PossiblyInvalidArrayAccess>
-      <code><![CDATA[$result['_id']]]></code>
-    </PossiblyInvalidArrayAccess>
     <PossiblyNullReference>
-      <code>getResource</code>
+      <code><![CDATA[getResource]]></code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor>
-      <code>ExtMongoDb</code>
-    </PropertyNotSetInConstructor>
+    <PossiblyUnusedReturnValue>
+      <code><![CDATA[bool]]></code>
+      <code><![CDATA[bool]]></code>
+    </PossiblyUnusedReturnValue>
     <RedundantConditionGivenDocblockType>
-      <code>null !== $result</code>
-      <code>null !== $result</code>
+      <code><![CDATA[null !== $result]]></code>
+      <code><![CDATA[null !== $result]]></code>
     </RedundantConditionGivenDocblockType>
     <UnsupportedPropertyReferenceUsage>
       <code><![CDATA[$initialized = &$this->initialized]]></code>
@@ -24,26 +21,21 @@
   </file>
   <file src="src/ExtMongoDb/AdapterPluginManagerDelegatorFactory.php">
     <UnusedParam>
-      <code>$container</code>
-      <code>$name</code>
+      <code><![CDATA[$container]]></code>
+      <code><![CDATA[$name]]></code>
     </UnusedParam>
   </file>
   <file src="src/ExtMongoDb/Module.php">
     <UnusedClass>
-      <code>Module</code>
+      <code><![CDATA[Module]]></code>
     </UnusedClass>
   </file>
   <file src="src/ExtMongoDbOptions.php">
     <PossiblyUnusedMethod>
-      <code>setCollection</code>
-      <code>setConnectionOptions</code>
-      <code>setDatabase</code>
-      <code>setDriverOptions</code>
+      <code><![CDATA[setCollection]]></code>
+      <code><![CDATA[setConnectionOptions]]></code>
+      <code><![CDATA[setDatabase]]></code>
+      <code><![CDATA[setDriverOptions]]></code>
     </PossiblyUnusedMethod>
-  </file>
-  <file src="src/ExtMongoDbResourceManager.php">
-    <DocblockTypeContradiction>
-      <code>is_array($resource)</code>
-    </DocblockTypeContradiction>
   </file>
 </files>
