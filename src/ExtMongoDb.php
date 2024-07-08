@@ -80,7 +80,6 @@ final class ExtMongoDb extends AbstractMetadataCapableAdapter implements Flushab
     {
         $this->initialize();
         $resourceId = $this->resourceId;
-        assert($resourceId !== null);
         return $this->resourceManager->getResource($resourceId);
     }
 
@@ -315,6 +314,10 @@ final class ExtMongoDb extends AbstractMetadataCapableAdapter implements Flushab
         }
     }
 
+    /**
+     * @psalm-assert ExtMongoDbResourceManagerInterface $this->resourceManager
+     * @psalm-assert string $this->resourceId
+     */
     private function initialize(): void
     {
         if ($this->initialized) {

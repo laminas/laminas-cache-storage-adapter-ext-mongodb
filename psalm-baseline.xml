@@ -4,9 +4,6 @@
     <MixedAssignment>
       <code><![CDATA[$casToken]]></code>
     </MixedAssignment>
-    <PossiblyNullReference>
-      <code><![CDATA[getResource]]></code>
-    </PossiblyNullReference>
     <PossiblyUnusedReturnValue>
       <code><![CDATA[bool]]></code>
       <code><![CDATA[bool]]></code>
