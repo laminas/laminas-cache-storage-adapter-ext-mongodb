@@ -9,7 +9,6 @@ use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
 use MongoDB\Client;
 use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 use function getenv;
 
