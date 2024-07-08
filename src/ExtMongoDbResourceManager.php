@@ -10,17 +10,10 @@ use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 
 use function assert;
-use function get_debug_type;
 use function is_array;
 use function is_string;
-use function sprintf;
 
-/**
- * Resource manager for the ext-mongodb adapter.
- *
- * If you are using ext-mongo, use the MongoDbResourceManager instead.
- */
-class ExtMongoDbResourceManager
+final class ExtMongoDbResourceManager implements ExtMongoDbResourceManagerInterface
 {
     /**
      * Registered resources
@@ -29,26 +22,12 @@ class ExtMongoDbResourceManager
      */
     private array $resources = [];
 
-    /**
-     * Check if a resource exists
-     *
-     * @param string $id
-     * @return bool
-     */
-    public function hasResource($id)
+    public function hasResource(string $id): bool
     {
         return isset($this->resources[$id]);
     }
 
-    /**
-     * Set a resource
-     *
-     * @param string $id
-     * @param array|Collection $resource
-     * @return self Provides a fluent interface
-     * @throws Exception\RuntimeException
-     */
-    public function setResource($id, $resource)
+    public function setResource(string $id, array|Collection $resource): void
     {
         if ($resource instanceof Collection) {
             $this->resources[$id] = [
@@ -56,30 +35,14 @@ class ExtMongoDbResourceManager
                 'collection'          => (string) $resource,
                 'collection_instance' => $resource,
             ];
-            return $this;
-        }
 
-        if (! is_array($resource)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects an array or %s; received %s',
-                __METHOD__,
-                Collection::class,
-                get_debug_type($resource)
-            ));
+            return;
         }
 
         $this->resources[$id] = $resource;
-        return $this;
     }
 
-    /**
-     * Instantiate and return the Collection resource
-     *
-     * @param string $id
-     * @return Collection
-     * @throws Exception\RuntimeException
-     */
-    public function getResource($id)
+    public function getResource(string $id): Collection
     {
         if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
@@ -118,25 +81,15 @@ class ExtMongoDbResourceManager
         return $instance;
     }
 
-    /**
-     * @param string $id
-     * @param string $server
-     * @return void
-     */
-    public function setServer($id, $server)
+    public function setServer(string $id, string $server): void
     {
-        $this->resources[$id]['server'] = (string) $server;
+        $this->resources[$id]['server'] = $server;
 
         unset($this->resources[$id]['client_instance']);
         unset($this->resources[$id]['collection_instance']);
     }
 
-    /**
-     * @param string $id
-     * @return null|string
-     * @throws Exception\RuntimeException If no matching resource discovered.
-     */
-    public function getServer($id)
+    public function getServer(string $id): null|string
     {
         if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
@@ -150,11 +103,7 @@ class ExtMongoDbResourceManager
         return $server;
     }
 
-    /**
-     * @param string $id
-     * @return void
-     */
-    public function setConnectionOptions($id, array $connectionOptions)
+    public function setConnectionOptions(string $id, array $connectionOptions): void
     {
         $this->resources[$id]['connection_options'] = $connectionOptions;
 
@@ -162,12 +111,7 @@ class ExtMongoDbResourceManager
         unset($this->resources[$id]['collection_instance']);
     }
 
-    /**
-     * @param string $id
-     * @return array
-     * @throws Exception\RuntimeException If no matching resource discovered.
-     */
-    public function getConnectionOptions($id)
+    public function getConnectionOptions(string $id): array
     {
         if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
@@ -181,11 +125,7 @@ class ExtMongoDbResourceManager
         return $options;
     }
 
-    /**
-     * @param string $id
-     * @return void
-     */
-    public function setDriverOptions($id, array $driverOptions)
+    public function setDriverOptions(string $id, array $driverOptions): void
     {
         $this->resources[$id]['driver_options'] = $driverOptions;
 
@@ -193,12 +133,7 @@ class ExtMongoDbResourceManager
         unset($this->resources[$id]['collection_instance']);
     }
 
-    /**
-     * @param string $id
-     * @return array
-     * @throws Exception\RuntimeException If no matching resource discovered.
-     */
-    public function getDriverOptions($id)
+    public function getDriverOptions(string $id): array
     {
         if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
@@ -212,24 +147,14 @@ class ExtMongoDbResourceManager
         return $options;
     }
 
-    /**
-     * @param string $id
-     * @param string $database
-     * @return void
-     */
-    public function setDatabase($id, $database)
+    public function setDatabase(string $id, string $database): void
     {
-        $this->resources[$id]['db'] = (string) $database;
+        $this->resources[$id]['db'] = $database;
 
         unset($this->resources[$id]['collection_instance']);
     }
 
-    /**
-     * @param string $id
-     * @return string
-     * @throws Exception\RuntimeException If no matching resource discovered.
-     */
-    public function getDatabase($id)
+    public function getDatabase(string $id): string
     {
         if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");
@@ -243,24 +168,14 @@ class ExtMongoDbResourceManager
         return $db;
     }
 
-    /**
-     * @param string $id
-     * @param string $collection
-     * @return void
-     */
-    public function setCollection($id, $collection)
+    public function setCollection(string $id, string $collection): void
     {
-        $this->resources[$id]['collection'] = (string) $collection;
+        $this->resources[$id]['collection'] = $collection;
 
         unset($this->resources[$id]['collection_instance']);
     }
 
-    /**
-     * @param string $id
-     * @return string
-     * @throws Exception\RuntimeException If no matching resource discovered.
-     */
-    public function getCollection($id)
+    public function getCollection(string $id): string
     {
         if (! $this->hasResource($id)) {
             throw new Exception\RuntimeException("No resource with id '{$id}'");

@@ -11,7 +11,7 @@ use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
  *
  * If you are using ext-mongo, use the MongoDbOptions class instead.
  */
-class ExtMongoDbOptions extends AdapterOptions
+final class ExtMongoDbOptions extends AdapterOptions
 {
     // @codingStandardsIgnoreStart
     /**
@@ -20,7 +20,7 @@ class ExtMongoDbOptions extends AdapterOptions
      *
      * @var string[]
      */
-    protected $__prioritizedProperties__ = [
+    protected array $__prioritizedProperties__ = [
         'resource_manager',
         'resource_id'
     ];
@@ -33,23 +33,15 @@ class ExtMongoDbOptions extends AdapterOptions
     /**
      * The ext-mongodb resource manager
      */
-    private ?ExtMongoDbResourceManager $resourceManager = null;
+    private ?ExtMongoDbResourceManagerInterface $resourceManager = null;
 
     /**
      * The resource id of the resource manager
      */
     private string $resourceId = 'default';
 
-    /**
-     * Set namespace separator
-     *
-     * @param  string $namespaceSeparator
-     * @return self Provides a fluent interface
-     */
-    public function setNamespaceSeparator($namespaceSeparator)
+    public function setNamespaceSeparator(string $namespaceSeparator): self
     {
-        $namespaceSeparator = (string) $namespaceSeparator;
-
         if ($this->namespaceSeparator !== $namespaceSeparator) {
             $this->triggerOptionEvent('namespace_separator', $namespaceSeparator);
 
@@ -59,22 +51,12 @@ class ExtMongoDbOptions extends AdapterOptions
         return $this;
     }
 
-    /**
-     * Get namespace separator
-     *
-     * @return string
-     */
-    public function getNamespaceSeparator()
+    public function getNamespaceSeparator(): string
     {
         return $this->namespaceSeparator;
     }
 
-    /**
-     * Set the ext-mongodb resource manager to use
-     *
-     * @return self Provides a fluent interface
-     */
-    public function setResourceManager(?ExtMongoDbResourceManager $resourceManager = null)
+    public function setResourceManager(?ExtMongoDbResourceManagerInterface $resourceManager = null): self
     {
         if ($this->resourceManager !== $resourceManager) {
             $this->triggerOptionEvent('resource_manager', $resourceManager);
@@ -85,36 +67,18 @@ class ExtMongoDbOptions extends AdapterOptions
         return $this;
     }
 
-    /**
-     * Get the ext-mongodb resource manager
-     *
-     * @return ExtMongoDbResourceManager
-     */
-    public function getResourceManager()
+    public function getResourceManager(): ExtMongoDbResourceManagerInterface
     {
-        return $this->resourceManager ?: $this->resourceManager = new ExtMongoDbResourceManager();
+        return $this->resourceManager ??= new ExtMongoDbResourceManager();
     }
 
-    /**
-     * Get the ext-mongodb resource id
-     *
-     * @return string
-     */
-    public function getResourceId()
+    public function getResourceId(): string
     {
         return $this->resourceId;
     }
 
-    /**
-     * Set the ext-mongodb resource id
-     *
-     * @param string $resourceId
-     * @return $this Provides a fluent interface
-     */
-    public function setResourceId($resourceId)
+    public function setResourceId(string $resourceId): self
     {
-        $resourceId = (string) $resourceId;
-
         if ($this->resourceId !== $resourceId) {
             $this->triggerOptionEvent('resource_id', $resourceId);
 
@@ -124,52 +88,31 @@ class ExtMongoDbOptions extends AdapterOptions
         return $this;
     }
 
-    /**
-     * Set the ext-mongodb server
-     *
-     * @param string $server
-     * @return $this Provides a fluent interface
-     */
-    public function setServer($server)
+    public function setServer(string $server): self
     {
         $this->getResourceManager()->setServer($this->getResourceId(), $server);
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setConnectionOptions(array $connectionOptions)
+    public function setConnectionOptions(array $connectionOptions): self
     {
         $this->getResourceManager()->setConnectionOptions($this->getResourceId(), $connectionOptions);
         return $this;
     }
 
-    /**
-     * @param array $driverOptions ext-mongodb driver options
-     * @return $this Provides a fluent interface
-     */
-    public function setDriverOptions(array $driverOptions)
+    public function setDriverOptions(array $driverOptions): self
     {
         $this->getResourceManager()->setDriverOptions($this->getResourceId(), $driverOptions);
         return $this;
     }
 
-    /**
-     * @param string $database
-     * @return $this Provides a fluent interface
-     */
-    public function setDatabase($database)
+    public function setDatabase(string $database): self
     {
         $this->getResourceManager()->setDatabase($this->getResourceId(), $database);
         return $this;
     }
 
-    /**
-     * @param string $collection
-     * @return $this Provides a fluent interface
-     */
-    public function setCollection($collection)
+    public function setCollection(string $collection): self
     {
         $this->getResourceManager()->setCollection($this->getResourceId(), $collection);
         return $this;

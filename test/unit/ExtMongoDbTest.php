@@ -10,9 +10,11 @@ use Laminas\Cache\Storage\FlushableInterface;
 
 use function getenv;
 
-/** @template-extends AbstractCommonAdapterTest<ExtMongoDb,ExtMongoDbOptions> */
+/** @template-extends AbstractCommonAdapterTest<ExtMongoDbOptions,ExtMongoDb> */
 final class ExtMongoDbTest extends AbstractCommonAdapterTest
 {
+    private const MONGODB_OBJECTID_REGULAR_EXPRESSION = '([a-zA-Z0-9]{24})';
+
     public function setUp(): void
     {
         $this->options = new ExtMongoDbOptions([
@@ -46,5 +48,13 @@ final class ExtMongoDbTest extends AbstractCommonAdapterTest
         ]);
 
         $this->assertInstanceOf(ExtMongoDbOptions::class, $this->storage->getOptions());
+    }
+
+    public function testObjectIdInMetadataMatchesExpectedFormat(): void
+    {
+        self::assertTrue($this->storage->setItem('foo', 'bar'));
+        $metadata = $this->storage->getMetadata('foo');
+        self::assertNotNull($metadata);
+        self::assertMatchesRegularExpression(self::MONGODB_OBJECTID_REGULAR_EXPRESSION, $metadata->objectId);
     }
 }

@@ -6,19 +6,21 @@ namespace Laminas\Cache\Storage\Adapter;
 
 use ArrayObject;
 use Laminas\Cache\Exception;
-use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
+use Laminas\Cache\Storage\AbstractMetadataCapableAdapter;
+use Laminas\Cache\Storage\Adapter\ExtMongoDb\Metadata;
 use Laminas\Cache\Storage\Capabilities;
 use Laminas\Cache\Storage\FlushableInterface;
+use MongoDB\BSON\ObjectIdInterface;
 use MongoDB\BSON\UTCDateTime as MongoDate;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
-use stdClass;
-use Traversable;
 
 use function array_key_exists;
+use function array_map;
 use function assert;
 use function get_debug_type;
 use function is_array;
+use function is_iterable;
 use function microtime;
 use function round;
 use function sprintf;
@@ -27,8 +29,12 @@ use function sprintf;
  * Cache storage adapter for ext-mongodb
  *
  * If you are using ext-mongo, use the MongoDb adapter instead.
+ *
+ * @uses ObjectIdInterface
+ *
+ * @template-extends AbstractMetadataCapableAdapter<ExtMongoDbOptions,Metadata>
  */
-class ExtMongoDb extends AbstractAdapter implements FlushableInterface
+final class ExtMongoDb extends AbstractMetadataCapableAdapter implements FlushableInterface
 {
     /**
      * Has this instance be initialized
@@ -38,7 +44,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     /**
      * the mongodb resource manager
      */
-    private ?ExtMongoDbResourceManager $resourceManager = null;
+    private ?ExtMongoDbResourceManagerInterface $resourceManager = null;
 
     /**
      * The mongodb resource id
@@ -51,9 +57,9 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     private string $namespacePrefix = '';
 
     /**
-     * @param null|array|Traversable|AdapterOptions|ExtMongoDbOptions $options
+     * @param null|iterable<string,mixed>|ExtMongoDbOptions $options
      */
-    public function __construct($options = null)
+    public function __construct(null|iterable|ExtMongoDbOptions $options = null)
     {
         parent::__construct($options);
 
@@ -74,18 +80,15 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     {
         $this->initialize();
         $resourceId = $this->resourceId;
-        assert($resourceId !== null);
         return $this->resourceManager->getResource($resourceId);
     }
 
     /**
-     * @param  array|Traversable|AdapterOptions|ExtMongoDbOptions $options
-     * @return $this
+     * {@inheritDoc}
      */
-    public function setOptions($options)
+    public function setOptions(iterable|AdapterOptions $options): self
     {
         if (! $options instanceof ExtMongoDbOptions) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $options = new ExtMongoDbOptions($options);
         }
 
@@ -94,13 +97,9 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     }
 
     /**
-     * Get options.
-     *
-     * @see    setOptions()
-     *
-     * @return ExtMongoDbOptions
+     * {@inheritDoc}
      */
-    public function getOptions()
+    public function getOptions(): ExtMongoDbOptions
     {
         $options = parent::getOptions();
         if (! $options instanceof ExtMongoDbOptions) {
@@ -113,10 +112,8 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
 
     /**
      * {@inheritDoc}
-     *
-     * @throws Exception\RuntimeException
      */
-    protected function internalGetItem(&$normalizedKey, &$success = null, mixed &$casToken = null)
+    protected function internalGetItem(string $normalizedKey, ?bool &$success = null, mixed &$casToken = null): mixed
     {
         $result  = $this->fetchFromCollection($normalizedKey);
         $success = false;
@@ -125,8 +122,11 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             return null;
         }
 
-        if ($this->ensureArrayType($result) === false) {
-            $result = [];
+        if (self::ensureArrayType($result) === false) {
+            throw new Exception\RuntimeException(
+                'Unable to retrieve item from collection.'
+                . ' Document was expected to returned as an array but an object was returned instead.',
+            );
         }
 
         if (isset($result['expires'])) {
@@ -160,10 +160,9 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     }
 
     /**
-     * @param-out array|mixed $result
-     * @psalm-assert-if-true array $result
+     * @psalm-assert-if-true array{_id:ObjectIdInterface,...} $result
      */
-    private function ensureArrayType(mixed &$result): bool
+    private static function ensureArrayType(mixed &$result): bool
     {
         if ($result instanceof ArrayObject) {
             $result = $result->getArrayCopy();
@@ -173,11 +172,28 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
             return false;
         }
 
-        foreach ($result as &$value) {
-            $this->ensureArrayType($value);
+        if (! array_key_exists('_id', $result) || ! $result['_id'] instanceof ObjectIdInterface) {
+            throw new Exception\InvalidArgumentException(
+                'Provided document does not contain the object ID in the expected format.',
+            );
         }
 
+        $result = array_map(self::recursivelyResolveArrayObjects(...), $result);
+
         return true;
+    }
+
+    private static function recursivelyResolveArrayObjects(mixed $value): mixed
+    {
+        if (! is_iterable($value)) {
+            return $value;
+        }
+
+        if ($value instanceof ArrayObject) {
+            return array_map(self::recursivelyResolveArrayObjects(...), $value->getArrayCopy());
+        }
+
+        return $value;
     }
 
     /**
@@ -185,7 +201,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function internalSetItem(&$normalizedKey, mixed &$value)
+    protected function internalSetItem(string $normalizedKey, mixed $value): bool
     {
         $mongo     = $this->getMongoCollection();
         $key       = $this->namespacePrefix . $normalizedKey;
@@ -215,7 +231,7 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\RuntimeException
      */
-    protected function internalRemoveItem(&$normalizedKey)
+    protected function internalRemoveItem(string $normalizedKey): bool
     {
         try {
             $result = $this->getMongoCollection()->deleteOne(['key' => $this->namespacePrefix . $normalizedKey]);
@@ -229,43 +245,33 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
     /**
      * {@inheritDoc}
      */
-    public function flush()
+    public function flush(): bool
     {
         $result = (object) $this->getMongoCollection()->drop();
-        return ((float) 1) === $result->ok;
+        return 1.0 === $result->ok;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function internalGetCapabilities()
+    protected function internalGetCapabilities(): Capabilities
     {
-        if ($this->capabilities) {
-            return $this->capabilities;
-        }
-
-        return $this->capabilities  = new Capabilities(
-            $this,
-            $this->capabilityMarker = new stdClass(),
+        return $this->capabilities ??= new Capabilities(
+            255,
+            true,
+            true,
             [
-                'supportedDatatypes' => [
-                    'NULL'     => true,
-                    'boolean'  => true,
-                    'integer'  => true,
-                    'double'   => true,
-                    'string'   => true,
-                    'array'    => true,
-                    'object'   => false,
-                    'resource' => false,
-                ],
-                'supportedMetadata'  => [
-                    '_id',
-                ],
-                'minTtl'             => 1,
-                'staticTtl'          => true,
-                'maxKeyLength'       => 255,
-                'namespaceIsPrefix'  => true,
-            ]
+                'NULL'     => true,
+                'boolean'  => true,
+                'integer'  => true,
+                'double'   => true,
+                'string'   => true,
+                'array'    => true,
+                'object'   => false,
+                'resource' => false,
+            ],
+            1,
+            false,
         );
     }
 
@@ -274,19 +280,32 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
      *
      * @throws Exception\ExceptionInterface
      */
-    protected function internalGetMetadata(&$normalizedKey)
+    protected function internalGetMetadata(string $normalizedKey): Metadata|null
     {
         $result = $this->fetchFromCollection($normalizedKey);
-        return null !== $result ? ['_id' => $result['_id']] : false;
+        if ($result === null) {
+            return null;
+        }
+
+        if (self::ensureArrayType($result) === false) {
+            throw new Exception\RuntimeException(
+                'Unable to retrieve item from collection.'
+                . ' Document was expected to returned as an array but an object was returned instead.',
+            );
+        }
+
+        $id = (string) $result['_id'];
+        assert($id !== '');
+
+        return new Metadata($id);
     }
 
     /**
      * Return raw records from MongoCollection
      *
-     * @return array|null|object
      * @throws Exception\RuntimeException
      */
-    private function fetchFromCollection(string $normalizedKey)
+    private function fetchFromCollection(string $normalizedKey): array|null|object
     {
         try {
             return $this->getMongoCollection()->findOne(['key' => $this->namespacePrefix . $normalizedKey]);
@@ -295,6 +314,10 @@ class ExtMongoDb extends AbstractAdapter implements FlushableInterface
         }
     }
 
+    /**
+     * @psalm-assert ExtMongoDbResourceManagerInterface $this->resourceManager
+     * @psalm-assert string $this->resourceId
+     */
     private function initialize(): void
     {
         if ($this->initialized) {

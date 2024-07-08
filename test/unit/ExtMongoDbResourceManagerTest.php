@@ -9,7 +9,6 @@ use Laminas\Cache\Storage\Adapter\ExtMongoDbResourceManager;
 use MongoDB\Client;
 use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 use function getenv;
 
@@ -61,16 +60,6 @@ final class ExtMongoDbResourceManagerTest extends TestCase
         $this->object->setResource($id, ['server' => $server]);
 
         $this->assertSame($server, $this->object->getServer($id));
-    }
-
-    public function testSetResourceThrowsException(): void
-    {
-        $id       = 'foo';
-        $resource = new stdClass();
-
-        $this->expectException(Exception\InvalidArgumentException::class);
-        /** @psalm-suppress InvalidArgument */
-        $this->object->setResource($id, $resource);
     }
 
     public function testHasResourceEmpty(): void

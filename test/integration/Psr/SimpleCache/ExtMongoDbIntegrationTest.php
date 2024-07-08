@@ -6,8 +6,9 @@ namespace LaminasTest\Cache\Storage\Adapter\Psr\SimpleCache;
 
 use Laminas\Cache\Storage\Adapter\ExtMongoDb;
 use Laminas\Cache\Storage\Plugin\Serializer;
-use Laminas\Cache\Storage\PluginAwareInterface;
 use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Serializer\AdapterPluginManager;
+use Laminas\ServiceManager\ServiceManager;
 use LaminasTest\Cache\Storage\Adapter\AbstractSimpleCacheIntegrationTest;
 
 use function getenv;
@@ -30,8 +31,7 @@ class ExtMongoDbIntegrationTest extends AbstractSimpleCacheIntegrationTest
             'collection' => (string) getenv('TESTS_LAMINAS_CACHE_EXTMONGODB_COLLECTION'),
         ]);
 
-        $serializer = new Serializer();
-        self::assertInstanceOf(PluginAwareInterface::class, $storage);
+        $serializer = new Serializer(new AdapterPluginManager(new ServiceManager()));
         $storage->addPlugin($serializer);
 
         return $storage;
