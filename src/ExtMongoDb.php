@@ -16,9 +16,11 @@ use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDriverException;
 
 use function array_key_exists;
+use function array_map;
 use function assert;
 use function get_debug_type;
 use function is_array;
+use function is_iterable;
 use function microtime;
 use function round;
 use function sprintf;
@@ -121,7 +123,7 @@ final class ExtMongoDb extends AbstractMetadataCapableAdapter implements Flushab
             return null;
         }
 
-        if ($this->ensureArrayType($result) === false) {
+        if (self::ensureArrayType($result) === false) {
             throw new Exception\RuntimeException(
                 'Unable to retrieve item from collection.'
                 . ' Document was expected to returned as an array but an object was returned instead.',
@@ -161,7 +163,7 @@ final class ExtMongoDb extends AbstractMetadataCapableAdapter implements Flushab
     /**
      * @psalm-assert-if-true array{_id:ObjectIdInterface,...} $result
      */
-    private function ensureArrayType(mixed &$result): bool
+    private static function ensureArrayType(mixed &$result): bool
     {
         if ($result instanceof ArrayObject) {
             $result = $result->getArrayCopy();
@@ -177,7 +179,22 @@ final class ExtMongoDb extends AbstractMetadataCapableAdapter implements Flushab
             );
         }
 
+        $result = array_map(self::recursivelyResolveArrayObjects(...), $result);
+
         return true;
+    }
+
+    private static function recursivelyResolveArrayObjects(mixed $value): mixed
+    {
+        if (! is_iterable($value)) {
+            return $value;
+        }
+
+        if ($value instanceof ArrayObject) {
+            return array_map(self::recursivelyResolveArrayObjects(...), $value->getArrayCopy());
+        }
+
+        return $value;
     }
 
     /**
@@ -271,7 +288,7 @@ final class ExtMongoDb extends AbstractMetadataCapableAdapter implements Flushab
             return null;
         }
 
-        if ($this->ensureArrayType($result) === false) {
+        if (self::ensureArrayType($result) === false) {
             throw new Exception\RuntimeException(
                 'Unable to retrieve item from collection.'
                 . ' Document was expected to returned as an array but an object was returned instead.',
